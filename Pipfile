@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "*"
+sqlalchemy = "*"
+requests = "*"
+python-dotenv = "*"
+streamlit-authenticator = "*"
+watchdog = "*"
+duckdb = "*"
+sqlalchemy-utils = "*"
+tqdm = "*"
+utm = "*"
+rtree = "*"
+streamlit-folium = "*"
+streamlit-geolocation = "*"
+boto3 = "*"
+
+[dev-packages]
+ipython = "*"
+
+[requires]
+python_version = "3.11"
