@@ -5,9 +5,10 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 import zipfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from email.mime.text import MIMEText
 from pathlib import Path
+from threading import Timer
 
 import boto3
 import pandas as pd
@@ -40,6 +41,7 @@ load_dotenv()
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
+BUCKET_NAME_STORE = os.environ.get("BUCKET_NAME_STORE")
 
 
 @st.cache_data
@@ -107,7 +109,7 @@ def init_authenticator():
         )
         # retrieve the config file from the bucket
         response = s3.get_object(
-            Bucket="storingbucketgasappstreamlit",
+            Bucket=BUCKET_NAME_STORE,
             Key="config.yaml",
         )
         config = yaml.load(response["Body"].read(), Loader=SafeLoader)
@@ -148,7 +150,7 @@ def dump_config(config):
         # put the config file in the bucket
         yaml_data = yaml.dump(config, default_flow_style=False)
         s3.put_object(
-            Bucket="storingbucketgasappstreamlit",
+            Bucket=BUCKET_NAME_STORE,
             Key="config.yaml",
             Body=yaml_data,
         )
@@ -253,6 +255,8 @@ def dump_stations():
         except sqlalchemy.exc.IntegrityError:
             db_session.rollback()
             st.error("Station already exists")
+    # remove xml file
+    Path("PrixCarburants_instantane_ruptures.xml").unlink()
 
 
 def bounding_stations(bounds):
@@ -375,7 +379,53 @@ def get_prices_user(user_name):
     )
     # apply a style to highlight the min price
     # data=df.style.highlight_min(subset=["Price"], color="red"),
+    # order the df by the lowest price
+    df = df.sort_values(by=["Price"], ascending=True)
+    st.dataframe(
+        data=df,
+        hide_index=True,
+        use_container_width=True,
+        column_config=column_config,
+        column_order=["Name", "Type", "Price", "Updated_at"],
+    )
 
+
+def get_prices_demo(followed_stations_list, followed_gastypes_list):
+    # get custom stations
+    data = {"Name": [], "Type": [], "Price": [], "Updated_at": []}
+    for custom_station in followed_stations_list:
+        # get prices for each custom station
+        custom_station_id = int(custom_station["id"])
+        prices = db_session.query(Price).filter_by(station_id=custom_station_id).all()
+        followed_gastypes_id_list = []
+        for gas_name in followed_gastypes_list:
+            gas_type = db_session.query(GasType).filter_by(name=gas_name).first()
+            if gas_type:
+                followed_gastypes_id_list.append(int(gas_type.xml_id))
+        for price in prices:
+            if price.gastype_id in followed_gastypes_id_list:
+                gas_type = (
+                    db_session.query(GasType).filter_by(xml_id=price.gastype_id).first()
+                )
+                data["Name"].append(custom_station.get("custom_name"))
+                data["Type"].append(gas_type.name)
+                # round the price at 2 decimals
+                data["Price"].append(price.price)
+                data["Updated_at"].append(price.updated_at)
+    columns = ["Name", "Type", "Price", "Updated_at"]
+    df = pd.DataFrame(data, columns=columns)
+    column_config = {
+        col: st.column_config.Column(disabled=True) for col in ["Name", "Type"]
+    }
+    column_config["Price"] = st.column_config.NumberColumn(
+        disabled=True, format="%.3f €"
+    )
+    column_config["Updated_at"] = st.column_config.DateColumn(
+        disabled=True,
+        format="DD-MM-YYYY",
+    )
+    # apply a style to highlight the min price
+    # data=df.style.highlight_min(subset=["Price"], color="red"),
     # order the df by the lowest price
     df = df.sort_values(by=["Price"], ascending=True)
     st.dataframe(
@@ -462,9 +512,11 @@ def etl_job():
     if not os.path.exists("pid.txt"):
         with open("pid.txt", "w") as file:
             file.write(str(os.getpid()))
+        # start etl at beginning of the thread
+        main_etl()
         signal.signal(signal.SIGTERM, signal_handler)
         signal.signal(signal.SIGINT, signal_handler)
-        job = Job(interval=timedelta(seconds=WAIT_TIME_SECONDS), execute=main_etl)
+        job = Timer(WAIT_TIME_SECONDS, main_etl)
         job.start()
 
         while True:
@@ -475,7 +527,7 @@ def etl_job():
                 # remove the pid file
                 if os.path.exists("pid.txt"):
                     os.remove("pid.txt")
-                job.stop()
+                job.cancel()
                 break
     else:
         print("PID file already found, job as already started. Exiting...")

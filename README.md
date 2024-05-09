@@ -6,6 +6,8 @@ and get oil from cheapest stations !
 # ENV management
 
 - GMAIL_APP_PASSWORD : app password for streamlit gmail account
+- LOAD_MODE="remote|local" : If remote, need AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+- BUCKET_NAME_STORE: Uri of the bucket where config file is stored, if using remote load mode
 
 # TODO
 
@@ -18,6 +20,6 @@ and get oil from cheapest stations !
 - [x] Add stations from a map, with possibility to geolocate yourself. Switch color and tooltip if station followed or not
 - [x] Create the thread for ETL, with monitoring as a background task
 - [ ] Add to kill process by admin
-- [ ] Bootstrap the Database (create gastypes if not exists)
-- [ ] Create a local and distant mode for `config.yaml` file, distant is on S3.
+- [x] Bootstrap the Database (create gastypes if not exists)
+- [x] Create a local and distant mode for `config.yaml` file, distant is on S3.
 - [ ] Load the first YAML with admin params as a env variable, not a file on VCS, to bootstrap dashboard distant

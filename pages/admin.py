@@ -56,6 +56,7 @@ if st.session_state["authentication_status"]:
                         result = db_session.execute(text(query))
                         for row in result:
                             st.write(row)
+                        db_session.commit()
 
             except Exception as e:
                 st.error(e)

@@ -160,7 +160,7 @@ if st.session_state["authentication_status"]:
     # map of stations
     map_center = st.session_state["center"]
     map_zoom = st.session_state["map_zoom"]
-    st.info("Click on a marker on the map to add a new station 👇")
+    st.info("Zoom in to see the markers and click to add a new station👇", icon="ℹ️")
     m = folium.Map(location=CENTER_START, zoom_start=map_zoom)
     fg = folium.FeatureGroup(name="Stations markers")
     for key, station in st.session_state["stations"].items():
@@ -257,4 +257,4 @@ if st.session_state["authentication_status"]:
                         st.session_state["stations"] = {}
 else:
     st.error("You must be logged in to access this page")
-st.sidebar.page_link("home.py", label="Click here to go back to main page")
+st.sidebar.page_link("home.py", label="Back to main page 🏠")
