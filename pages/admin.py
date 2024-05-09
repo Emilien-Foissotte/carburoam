@@ -37,13 +37,17 @@ if st.session_state["authentication_status"]:
                 st.error(e)
         # download config file
         with st.expander("Download Credentials file"):
-            with open("config.yaml", "rb") as file:
-                btn = st.download_button(
-                    label="Download file",
-                    data=file,
-                    file_name="config.yaml",
-                    mime="text/yaml",
-                )
+            # if config file exists
+            if os.path.exists("config.yaml"):
+                with open("config.yaml", "rb") as file:
+                    btn = st.download_button(
+                        label="Download file",
+                        data=file,
+                        file_name="config.yaml",
+                        mime="text/yaml",
+                    )
+            else:
+                st.write("No config file found")
         st.divider()
         st.subheader("Admin actions on Database")
         # query the database
