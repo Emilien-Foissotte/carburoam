@@ -1,6 +1,7 @@
 config.yaml
 pid.txt
 lastjob.txt
+.streamlit/secrets.toml
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,python,jupyternotebooks,visualstudiocode,vim,pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,python,jupyternotebooks,visualstudiocode,vim,pycharm

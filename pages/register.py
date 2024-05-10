@@ -1,8 +1,12 @@
+import logging
+
 import streamlit as st
 
 from models import User
 from session import db_session
 from utils import dump_config, init_authenticator
+
+logger = logging.getLogger("gas_station_app")
 
 authenticator, config = init_authenticator()
 
@@ -14,6 +18,7 @@ if st.session_state["authentication_status"] is None:
             name_of_registered_user,
         ) = authenticator.register_user(pre_authorization=False)
         if email_of_registered_user:
+            logger.info("User registered")
             new_user = User(
                 username=username_of_registered_user,
                 email=email_of_registered_user,

@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -8,6 +9,8 @@ from sqlalchemy.sql import text
 from models import VerificationCode
 from session import db_session
 from utils import init_authenticator, send_email
+
+logger = logging.getLogger("gas_station_app")
 
 authenticator, config = init_authenticator()
 
@@ -23,6 +26,7 @@ if st.session_state["authentication_status"]:
                     authenticator.forgot_password()
                 )
                 if username_forgot_pw:
+                    logger.info("New password sent")
                     st.success("New password sent securely")
                     # Random password to be transferred to user securely
                     body = f"Your new password is {random_password}"
@@ -39,6 +43,7 @@ if st.session_state["authentication_status"]:
         with st.expander("Download Credentials file"):
             # if config file exists
             if os.path.exists("config.yaml"):
+                logger.info("Config file found")
                 with open("config.yaml", "rb") as file:
                     btn = st.download_button(
                         label="Download file",
@@ -57,11 +62,25 @@ if st.session_state["authentication_status"]:
                     query = st.text_input("Query")
                     submitted = st.form_submit_button("Submit")
                     if submitted:
-                        result = db_session.execute(text(query))
-                        for row in result:
-                            st.write(row)
-                        db_session.commit()
-
+                        logger.info("User queried the database")
+                        conn = st.connection("gas_db", type="sql")
+                        result = conn.query(query, ttl=60)
+                        st.dataframe(result)
+            except Exception as e:
+                st.error(e)
+        # query the database
+        with st.expander("Commit database"):
+            try:
+                with st.form(key="form_modify_database"):
+                    query = st.text_input("Query")
+                    submitted = st.form_submit_button("Submit")
+                    if submitted:
+                        logger.info("User modified the database")
+                        conn = st.connection("gas_db", type="sql")
+                        with conn.session as s:
+                            result = s.execute(query)
+                            st.write(result)
+                            s.commit()
             except Exception as e:
                 st.error(e)
         # flush expired verification codes
@@ -69,6 +88,7 @@ if st.session_state["authentication_status"]:
             with st.form(key="form_flush_expired_verification_codes"):
                 submitted = st.form_submit_button("Flush")
                 if submitted:
+                    logger.info("User flushed expired verification codes")
                     with st.spinner("Flushing expired verification codes"):
                         try:
                             db_session.query(VerificationCode).filter(

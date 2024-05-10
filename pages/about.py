@@ -1,4 +1,8 @@
+import logging
+
 import streamlit as st
+
+logger = logging.getLogger("gas_station_app")
 
 """
 # About this project 🚀
@@ -18,7 +22,7 @@ The goal is :
 """
 )
 st.divider()
-
+logger.info("About page loaded")
 st.write(
     "Deep dive using tabs on the left, read more about the behind the scenes of the app following my blog"
     "post available [here in french](https://emilien-foissotte.github.io/fr/posts/"

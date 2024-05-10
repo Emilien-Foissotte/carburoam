@@ -1,0 +1,20 @@
+name: Trigger Probe of Deployed App on a CRON Schedule
+on:
+  schedule:
+    - cron: '0 */48 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: docker build -t my-probe-image -f probe-action/Dockerfile .
+
+      - name: Run Docker Container
+        run: docker run --rm my-probe-image

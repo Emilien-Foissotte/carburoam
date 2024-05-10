@@ -4,6 +4,7 @@ import string
 from datetime import datetime, timedelta
 
 import bcrypt
+import sqlalchemy
 import streamlit as st
 
 from models import User, VerificationCode
@@ -21,6 +22,7 @@ with st.expander("Forgot username"):
             authenticator.forgot_username()
         )
         if username_of_forgotten_username:
+            logger.info("Username sent")
             # The developer should securely transfer the username to the user.
             body = f"Your username is {username_of_forgotten_username}"
             send_email(
@@ -30,6 +32,7 @@ with st.expander("Forgot username"):
             )
             st.success("Username has been sent to your email. Please check your email.")
         elif username_of_forgotten_username == False:
+            logger.error("Username not found")
             st.error("Email not found")
     except Exception as e:
         st.error(e)
@@ -39,8 +42,8 @@ with st.expander("Forgot password"):
     with st.form(key="form_forgot_password"):
         mail = st.text_input("Email")
         submitted = st.form_submit_button("Submit")
-
         if submitted:
+            logger.info("User asked for a password reset")
             user = db_session.query(User).filter(User.email == mail).first()
             if user:
                 # check if a previous code exists
@@ -51,11 +54,13 @@ with st.expander("Forgot password"):
                     .first()
                 )
                 if previous_code:
+                    logger.info("Previous code exists")
                     if previous_code.created_at > datetime.now() - timedelta(minutes=5):
                         st.warning(
-                            "A code has been already sent to your email. Please check your email."
+                            "A code has been already sent to your email. Please check your email and spam."
                         )
                     else:
+                        logger.info("Code expired")
                         st.error("Code has expired. Please request a new one")
                         db_session.delete(previous_code)
                         try:
@@ -64,6 +69,7 @@ with st.expander("Forgot password"):
                             db_session.rollback()
                             st.error("Code already deleted")
                 else:
+                    logger.info("No previous code, generating new one")
                     # generate a random password to send by email and add to database
                     random_verification_code = "".join(
                         random.choices(string.ascii_letters + string.digits, k=6)
@@ -87,7 +93,7 @@ with st.expander("Forgot password"):
                         recipients=[user.email],
                     )
                     st.success(
-                        "A link to generate a new password has been sent to your email. Please check your email."
+                        "A uniqude code to generate a new password has been sent to your email. Please check your email and spam."
                     )
                     st.warning("Code is valid for 5 minutes")
 
@@ -98,14 +104,17 @@ with st.expander("Forgot password"):
         code = st.text_input("Verification code")
         submitted = st.form_submit_button("Submit")
         if submitted:
+            logger.info("User submitted a code")
             verification_code = (
                 db_session.query(VerificationCode)
                 .filter(VerificationCode.code == code)
                 .first()
             )
             if verification_code:
+                logger.info("Code found")
                 if verification_code.created_at > datetime.now() - timedelta(minutes=5):
                     st.success("Code is valid")
+                    logger.info("Code is valid")
                     # get the user
                     user = (
                         db_session.query(User)
@@ -129,7 +138,7 @@ with st.expander("Forgot password"):
                     )
                     dump_config(config)
                     st.success(
-                        "Password has been sent to your email. Please check your email."
+                        "New password has been sent to your email. Please check your email and spam."
                     )
                     db_session.delete(verification_code)
                     try:
@@ -138,6 +147,7 @@ with st.expander("Forgot password"):
                         db_session.rollback()
                         st.error("Code already deleted")
                 else:
+                    logger.info("Code expired")
                     st.error("Code has expired. Please request a new one")
                     db_session.delete(verification_code)
                     try:

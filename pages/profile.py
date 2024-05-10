@@ -1,12 +1,17 @@
+import logging
+
 import streamlit as st
 
 from models import GasType, User
 from session import db_session
 from utils import dump_config, init_authenticator
 
+logger = logging.getLogger("gas_station_app")
+
 authenticator, config = init_authenticator()
 
 if st.session_state["authentication_status"]:
+    logger.info("Profile page loaded")
     name = st.session_state["name"]
     username = st.session_state["username"]
     st.write(f"Welcome *{name}*")
@@ -33,6 +38,7 @@ if st.session_state["authentication_status"]:
             checkboxs_dict[gas_type.id] = value
         submitted = st.form_submit_button()
         if submitted:
+            logger.info("User modified preferred gas types")
             for key, value in checkboxs_dict.items():
                 if value and key not in id_gastypes_followed:
                     gas_type = db_session.query(GasType).filter_by(id=key).first()
@@ -53,6 +59,7 @@ if st.session_state["authentication_status"]:
     with st.expander("Modify details for name/email"):
         try:
             if authenticator.update_user_details(st.session_state["username"]):
+                logger.info("User modified details")
                 st.success("Entries modified successfully")
             dump_config(config)
         except Exception as e:
@@ -60,6 +67,7 @@ if st.session_state["authentication_status"]:
     with st.expander("Reset password"):
         try:
             if authenticator.reset_password(st.session_state["username"]):
+                logger.info("User modified password")
                 st.success("Password modified successfully")
             dump_config(config)
         except Exception as e:
@@ -67,9 +75,9 @@ if st.session_state["authentication_status"]:
     with st.expander("Delete account"):
         with st.form(key="delete_account"):
             st.warning("This action is irreversible")
-
             submitted = st.form_submit_button()
             if submitted:
+                logger.info("User deleted account")
                 try:
                     del config["credentials"]["usernames"][st.session_state["username"]]
                     st.success("Account deleted successfully")
