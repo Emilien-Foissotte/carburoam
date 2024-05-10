@@ -79,7 +79,6 @@ if st.session_state["authentication_status"]:
                         conn = st.connection("gas_db", type="sql")
                         with conn.session as s:
                             result = s.execute(text(query))
-                            st.write(result)
                             s.commit()
             except Exception as e:
                 st.error(e)

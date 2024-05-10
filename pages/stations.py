@@ -33,9 +33,10 @@ def render_stations(user_id):
 
     # create a dataframe from the custom stations
     for custom_station in custom_stations:
+        name = custom_station.custom_name.upper()
         with col1:
             st.button(
-                custom_station.custom_name.upper(),
+                name,
                 on_click=on_click_center_map,
                 type="secondary",
                 args=(custom_station.id,),
@@ -43,7 +44,7 @@ def render_stations(user_id):
             )
         with col2:
             st.button(
-                "Edit station",
+                f"Edit {name}",
                 on_click=on_click_edit_custom_station,
                 type="secondary",
                 args=(custom_station.id,),
@@ -51,7 +52,7 @@ def render_stations(user_id):
             )
         with col3:
             st.button(
-                "Delete station",
+                f"Delete {name}",
                 on_click=on_click_delete_custom_station,
                 args=(custom_station.id,),
                 type="primary",
