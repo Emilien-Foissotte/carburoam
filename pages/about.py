@@ -26,6 +26,7 @@ logger.info("About page loaded")
 st.write(
     "Deep dive using tabs on the left, read more about the behind the scenes of the app following my blog"
     "post available [here in french](https://emilien-foissotte.github.io/fr/posts/"
-    "2024/XX//?utm_campaign=GasWebApp) or [here in english](https://emilien-foissotte.github.io/posts/"
-    "2024/XX//?utm_campaign=GasWebApp)"
+    "2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp) or [here in english](https://emilien-foissotte.github.io/posts/"
+    "posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)"
 )
+st.sidebar.page_link("home.py", label="Back to main page 🏠")

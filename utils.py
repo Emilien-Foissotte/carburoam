@@ -388,6 +388,12 @@ def get_prices_user(user_name):
         column_config=column_config,
         column_order=["Name", "Type", "Price", "Updated_at"],
     )
+    # create a metric showing gain
+    if df.shape[0] > 2:
+        metric = st.metric(
+            "Annual Savings 💰",
+            f"{round((df['Price'].max() - df['Price'].min()) * 650, 2)} €",
+        )
 
 
 def get_prices_demo(followed_stations_list, followed_gastypes_list):
