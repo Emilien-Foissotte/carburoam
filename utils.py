@@ -389,7 +389,7 @@ def get_prices_user(user_name):
         column_order=["Name", "Type", "Price", "Updated_at"],
     )
     # create a metric showing gain
-    if df.shape[0] > 2:
+    if df.shape[0] >= 2:
         st.metric(
             "Annual Savings 💰",
             f"{round((df['Price'].max() - df['Price'].min()) * 650, 2)} €",
