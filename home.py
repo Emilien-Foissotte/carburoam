@@ -74,7 +74,7 @@ def main():
         logger.info("User logged in")
         authenticator.logout("Logout", "sidebar")
         st.write(f'Welcome on Carburoam, *{st.session_state["name"]}*')
-        st.title("🇫 Stations 🚘💸🛢️")
+        st.title("Stations 🚘💸🛢️")
         # create a dataframe from the custom stations and the prices
         get_prices_user(st.session_state["username"])
         st.divider()
