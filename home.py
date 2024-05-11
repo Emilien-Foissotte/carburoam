@@ -73,8 +73,8 @@ def main():
     if st.session_state["authentication_status"]:
         logger.info("User logged in")
         authenticator.logout("Logout", "sidebar")
-        st.write(f'Welcome *{st.session_state["name"]}*')
-        st.title("Stations 🚘💸🛢️")
+        st.write(f'Welcome on Carburoam, *{st.session_state["name"]}*')
+        st.title("🇫 Stations 🚘💸🛢️")
         # create a dataframe from the custom stations and the prices
         get_prices_user(st.session_state["username"])
         st.divider()
