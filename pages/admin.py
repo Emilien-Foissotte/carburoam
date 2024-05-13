@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -122,7 +123,18 @@ if st.session_state["authentication_status"]:
                 else:
                     st.write(f"No file {file} found")
         st.divider()
-
+        with st.expander("Trigger shell commands on host"):
+            with st.form(key="form_shell_command"):
+                command = st.text_input("Command")
+                submitted = st.form_submit_button("Submit")
+                if submitted:
+                    logger.info("User triggered shell command")
+                    with st.spinner("Executing command"):
+                        # write the output of the command
+                        output = subprocess.run(
+                            command, shell=True, capture_output=True
+                        )
+                        st.write(output.stdout.decode())
     else:
         st.error("You are not authorized to access this page")
 st.sidebar.page_link("home.py", label="Back to main page 🏠")
