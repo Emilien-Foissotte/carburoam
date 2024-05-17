@@ -3,6 +3,16 @@
 Community Available Dashboard to pick and follow your nearest stations,
 and get oil from cheapest stations !
 
+<video width="630" height="300" src="medias/demo.webm"></video>
+
+Follow along [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
+
+See the deployed version of the app [here](https://carburoam.streamlit.app/)
+
+## Developer Track Notes
+
+Have look under the process I followed to deploy this app under here (might be a too direct), here or on my blog
+
 # ENV management
 
 - GMAIL_APP_PASSWORD : app password for streamlit gmail account
