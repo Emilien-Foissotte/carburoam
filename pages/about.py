@@ -29,4 +29,8 @@ st.write(
     "2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp) or [here in english](https://emilien-foissotte.github.io/posts/"
     "posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)"
 )
+
+st.write(
+    "Have a look at the Github repository [here](https://github.com/Emilien-Foissotte/stationsdashboard/)"
+)
 st.sidebar.page_link("home.py", label="Back to main page 🏠")
