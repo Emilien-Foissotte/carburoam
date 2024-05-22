@@ -1,13 +1,13 @@
-# Carburoam
+# Carburoam 🛢️💸
 
 Community Available Dashboard to pick and follow your nearest stations,
-and get oil from cheapest stations !
+and get oil from cheapest stations ! ⛽
 
 [![Watch the video](medias/videocover.png)](https://www.youtube.com/embed/Hdzx-nRAvdI)
 
-Follow along the building of this dashboard [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
+Follow along the building of this dashboard ⚙️ [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
 
-See the deployed version of the app here [carburoam.streamlit.app](https://carburoam.streamlit.app/)
+See the deployed version of the app here 👉 [carburoam.streamlit.app](https://carburoam.streamlit.app/)
 
 ## Developer Track Notes
 
@@ -29,7 +29,6 @@ Have look under the process I followed to deploy this app under here (might be a
 - [x] Create a station page to manage stations, edit them, delete them.
 - [x] Add stations from a map, with possibility to geolocate yourself. Switch color and tooltip if station followed or not
 - [x] Create the thread for ETL, with monitoring as a background task
-- [ ] Add to kill process by admin
+- [x] Add to kill process by admin
 - [x] Bootstrap the Database (create gastypes if not exists)
 - [x] Create a local and distant mode for `config.yaml` file, distant is on S3.
-- [ ] Load the first YAML with admin params as a env variable, not a file on VCS, to bootstrap dashboard distant
