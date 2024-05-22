@@ -479,7 +479,7 @@ def send_email(subject, body, recipients):
 ###SIMPLE ETL#####
 ##################
 
-WAIT_TIME_SECONDS = 60 * 60 * 24  # 24 hours
+WAIT_TIME_SECONDS = 60 * 60 * 6  # each 6 hours
 
 
 class ProgramKilled(Exception):
