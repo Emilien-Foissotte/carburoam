@@ -1,13 +1,13 @@
-# Gas Stations Dashboard V2
+# Carburoam
 
 Community Available Dashboard to pick and follow your nearest stations,
 and get oil from cheapest stations !
 
-[![Watch the video](https://img.youtube.com/vi/Hdzx-nRAvdI/hqdefault.jpg)](https://www.youtube.com/embed/Hdzx-nRAvdI)
+[![Watch the video](medias/videocover.png)](https://www.youtube.com/embed/Hdzx-nRAvdI)
 
-Follow along [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
+Follow along the building of this dashboard [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
 
-See the deployed version of the app emoji finger right [carburoam.streamlit.app](https://carburoam.streamlit.app/)
+See the deployed version of the app here [carburoam.streamlit.app](https://carburoam.streamlit.app/)
 
 ## Developer Track Notes
 
