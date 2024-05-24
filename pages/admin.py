@@ -41,9 +41,13 @@ if st.session_state["authentication_status"]:
             count_users = db_session.query(User).count()
             st.metric("Total users", count_users)
         with c2:
-            count_users_custom_stations = (
-                db_session.query(CustomStation).distinct(CustomStation.user_id).count()
+            # make a pure sql query on this one
+            conn = st.connection("gas_db", type="sql")
+            df_result = conn.query(
+                "SELECT COUNT(DISTINCT(user_id)) as total FROM custom_stations", ttl=60
             )
+
+            count_users_custom_stations = df_result.iloc[0]["total"]
             st.metric("Users with custom stations", count_users_custom_stations)
             # count expired verification codes
         st.subheader("Verification codes")
