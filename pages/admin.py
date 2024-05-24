@@ -185,6 +185,14 @@ if st.session_state["authentication_status"]:
         st.subheader("Admin actions on ETL")
         with st.expander("Show status files for ETL Job"):
             files = list(Path("outputs/").glob("*.txt"))
+            # add a form to remove output logs files
+            with st.form(key="form_remove_logs"):
+                submitted = st.form_submit_button("Remove logs")
+                if submitted:
+                    logger.info("User triggered log files removal")
+                    for file in files:
+                        file.unlink()
+                    st.success("Files removed")
             files += ["pid.txt", "lastjob.txt"]
             for file in files:
                 st.caption(file)
