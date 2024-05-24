@@ -6,6 +6,7 @@ from pathlib import Path
 
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 from sqlalchemy.sql import text
 
 from models import CustomStation, User, VerificationCode
@@ -14,6 +15,7 @@ from utils import init_authenticator, send_email
 
 logger = logging.getLogger("gas_station_app")
 
+load_dotenv()
 authenticator, config = init_authenticator()
 
 if st.session_state["authentication_status"]:
@@ -24,16 +26,38 @@ if st.session_state["authentication_status"]:
         st.subheader("Main KPIs about the app")
         # display view counts json from goatcounter
         st.subheader("View counts")
-        r = requests.get(
-            "https://emilienfoissotte.goatcounter.com/counter//carburoam_app.json"
+        # make a request with a json body
+        last_week = datetime.now() - timedelta(days=7)
+        url = "https://emilienfoissotte.goatcounter.com/api/v0/stats/total/"
+        headers = {
+            "Authorization": f"Bearer {os.getenv('GOATCOUNTER_API_KEY')}",
+        }
+        r_last_week = requests.get(
+            url,
+            headers=headers,
+            # start is a date-time string, compute as last week
+            data={"start": last_week, "include_paths": [34133008]},
         )
-        if r.status_code == 200:
-            data = r.json()
+        r_last_month = requests.get(
+            url,
+            headers=headers,
+            # start is a date-time string, compute as last month
+            data={"start": last_week - timedelta(days=30), "include_paths": [34133008]},
+        )
+
+        if r_last_week.status_code == 200:
+            data_count = r_last_week.json()
             c1, c2 = st.columns(2)
             with c1:
-                st.metric("Total views", data["count"])
-            with c2:
-                st.metric("Unique visitors", data["count_unique"])
+                st.metric("Total views last week", data_count["total"])
+            if r_last_month.status_code == 200:
+                data_count_month = r_last_month.json()
+                with c2:
+                    st.metric("Total views last month", data_count_month["total"])
+        else:
+            st.write(r_last_week.status_code)
+            st.error("Failed to get the view counts")
+            logger.error("Failed to get the view counts")
         # display a count of users
         st.subheader("Users")
         c1, c2 = st.columns(2)
