@@ -4,10 +4,11 @@ import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import requests
 import streamlit as st
 from sqlalchemy.sql import text
 
-from models import VerificationCode
+from models import CustomStation, User, VerificationCode
 from session import db_session
 from utils import init_authenticator, send_email
 
@@ -19,6 +20,50 @@ if st.session_state["authentication_status"]:
     if st.session_state["username"] == "admin":
         st.write(f'Welcome *{st.session_state["name"]}*')
         st.title("Admin dashboard 🛠️")
+        st.divider()
+        st.subheader("Main KPIs about the app")
+        # display view counts json from goatcounter
+        st.subheader("View counts")
+        r = requests.get(
+            "https://emilienfoissotte.goatcounter.com/counter//carburoam_app.json"
+        )
+        if r.status_code == 200:
+            data = r.json()
+            c1, c2 = st.columns(2)
+            with c1:
+                st.metric("Total views", data["count"])
+            with c2:
+                st.metric("Unique visitors", data["count_unique"])
+        # display a count of users
+        st.subheader("Users")
+        c1, c2 = st.columns(2)
+        with c1:
+            count_users = db_session.query(User).count()
+            st.metric("Total users", count_users)
+        with c2:
+            count_users_custom_stations = (
+                db_session.query(CustomStation).distinct(CustomStation.user_id).count()
+            )
+            st.metric("Users with custom stations", count_users_custom_stations)
+            # count expired verification codes
+        st.subheader("Verification codes")
+        c1, c2 = st.columns(2)
+        with c1:
+            count_verification_codes = db_session.query(VerificationCode).count()
+            st.metric("Total verification codes", count_verification_codes)
+        with c2:
+            count_expired_codes = (
+                db_session.query(VerificationCode)
+                .filter(
+                    VerificationCode.created_at < datetime.now() - timedelta(minutes=5)
+                )
+                .count()
+            )
+            st.metric("Expired verification codes", count_expired_codes)
+        # count custom stations
+        st.subheader("Custom stations")
+        count_custom_stations = db_session.query(CustomStation).count()
+        st.metric("Custom stations", count_custom_stations)
         st.divider()
         st.subheader("Admin actions on Users")
         with st.expander("Reset a user password"):
@@ -36,7 +81,7 @@ if st.session_state["authentication_status"]:
                         body=body,
                         recipients=[email_forgot_password],
                     )
-                elif username_forgot_pw == False:
+                elif not username_forgot_pw and username_forgot_pw is not None:
                     st.error("Username not found")
             except Exception as e:
                 st.error(e)
@@ -109,7 +154,7 @@ if st.session_state["authentication_status"]:
                     mime="application/sqlite3",
                 )
         st.divider()
-        st.subheader("Admin actions on Stations")
+        st.subheader("Admin actions on ETL")
         with st.expander("Show status files for ETL Job"):
             files = list(Path("outputs/").glob("*.txt"))
             files += ["pid.txt", "lastjob.txt"]
@@ -122,7 +167,38 @@ if st.session_state["authentication_status"]:
                             st.write(line)
                 else:
                     st.write(f"No file {file} found")
+        with st.expander("ETL thread"):
+            with st.form(key="form_etl_command"):
+                submitted = st.form_submit_button("Kill ETL")
+                if submitted:
+                    logger.info("User triggered etl reboot command")
+                    if Path("pid.txt").exists():
+                        # echo the content of the pid file
+                        with open("pid.txt", "r") as file:
+                            pid = file.read()
+                            command = f"kill {pid}"
+                            with st.spinner("Executing command"):
+                                # write the output of the command
+                                output = subprocess.run(
+                                    command, shell=True, capture_output=True
+                                )
+                                st.write(output.stdout.decode())
+                            # remove the pid file, ok even if not exists (means cleanup successfull)
+                            Path("pid.txt").unlink(missing_ok=True)
+                    else:
+                        st.error("No pid file found")
+            # form to remove last job txt file
+            with st.form(key="form_remove_lastjob"):
+                submitted = st.form_submit_button("Remove last job file")
+                if submitted:
+                    logger.info("User triggered lastjob file removal")
+                    if Path("lastjob.txt").exists():
+                        Path("lastjob.txt").unlink()
+                        st.success("File removed")
+                    else:
+                        st.error("No lastjob file found")
         st.divider()
+        st.subheader("Admin actions on Host")
         with st.expander("Trigger shell commands on host"):
             with st.form(key="form_shell_command"):
                 command = st.text_input("Command")

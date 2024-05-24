@@ -182,7 +182,7 @@ def loadXML():
             with zipfile.ZipFile("ZIP.zip", "r") as zip_ref:
                 zip_ref.extractall("./")
                 zip_ref.close()
-            os.remove("ZIP.zip")
+            Path("ZIP.zip").unlink(missing_ok=True)
         except HTTPError as http_err:
             print(f"HTTP error occurred: {http_err}")
         else:
@@ -209,7 +209,9 @@ def dump_stations():
     tree = ET.parse(xmlfile)
     # get root element
     root = tree.getroot()
-    for pdv in tqdm(root.iter("pdv"), total=10006):
+    # compute the total amount of stations for tqdm progress bar
+    total_stations = len(root.findall("pdv"))
+    for pdv in tqdm(root.iter("pdv"), total=total_stations):
         id_station = pdv.get("id")
         latitude = pdv.get("latitude")
         longitude = pdv.get("longitude")
