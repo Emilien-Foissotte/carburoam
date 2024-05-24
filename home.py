@@ -121,5 +121,6 @@ def main():
 
 
 if __name__ == "__main__":
+    f"![](https://emilienfoissotte.goatcounter.com/count?p={os.getenv('TRACKING_NAME')})"
     init_logging()
     main()
