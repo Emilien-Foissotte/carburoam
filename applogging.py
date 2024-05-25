@@ -15,18 +15,14 @@ def get_remote_ip() -> str | None:
             return None
 
         session_info = runtime.get_instance().get_client(ctx.session_id)
+        remote_ip = session_info.remote_ip
 
-        if session_info is None:
-            return None
-        else:
-            forwarded_ip = session_info.request.headers.get("X-FORWARDED-FOR")
-            if forwarded_ip is not None:
-                # split to get the last ip
-                return forwarded_ip.split(",")[-1].strip()
+        # doesn't work in cloud streamlit as remote ip is hosting IP
 
     except Exception as e:
-        logger.error("Error getting remote ip")
+        logger.error(f"Error getting remote ip due to {e}")
         return None
+    return remote_ip
 
 
 class ContextFilter(logging.Filter):
