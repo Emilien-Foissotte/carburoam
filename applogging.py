@@ -3,8 +3,10 @@ import logging
 from streamlit import runtime
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 
+logger = logging.getLogger("gas_station_app")
 
-def get_remote_ip() -> str:
+
+def get_remote_ip() -> str | None:
     """Get remote ip."""
 
     try:
@@ -13,12 +15,18 @@ def get_remote_ip() -> str:
             return None
 
         session_info = runtime.get_instance().get_client(ctx.session_id)
+
         if session_info is None:
             return None
-    except Exception as e:
-        return None
+        else:
+            forwarded_ip = session_info.request.headers.get("X-FORWARDED-FOR")
+            if forwarded_ip is not None:
+                # split to get the last ip
+                return forwarded_ip.split(",")[-1].strip()
 
-    return session_info.request.remote_ip
+    except Exception as e:
+        logger.error("Error getting remote ip")
+        return None
 
 
 class ContextFilter(logging.Filter):
