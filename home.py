@@ -80,7 +80,7 @@ def main():
         st.divider()
         if st.session_state.get("lastjob"):
             st.metric(
-                datetime.strftime(st.session_state["lastjob"], "%y-%m-%d"),
+                datetime.strftime(st.session_state["lastjob"], "%A, %d %B %Y - %H:%M"),
                 "last extract of prices",
             )
         st.caption("Customize your experience ⬇️")

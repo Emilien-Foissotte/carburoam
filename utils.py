@@ -258,7 +258,7 @@ def dump_stations():
             db_session.rollback()
             st.error("Station already exists")
     # remove xml file
-    Path("PrixCarburants_instantane_ruptures.xml").unlink()
+    Path("PrixCarburants_instantane_ruptures.xml").unlink(missing_ok=True)
 
 
 def bounding_stations(bounds):
