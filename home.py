@@ -135,23 +135,15 @@ if __name__ == "__main__":
     f"![](https://emilienfoissotte.goatcounter.com/count?p={os.getenv('TRACKING_NAME')})"
     init_logging()
 
-    from streamlit.web.server.websocket_headers import _get_websocket_headers
+    from streamlit import runtime
+    from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-    headers = _get_websocket_headers()
-    # Example: "X-Forwarded-For': '13.51.91.225, 162.158.90.188'"
-    x_forwarded_for = headers.get("X-Forwarded-For", "")
-    first_ip = x_forwarded_for.split(", ")[0]
-    st.write("Remote IP", first_ip)
+    ctx = get_script_run_ctx()
 
-    # from streamlit import runtime
-    # from streamlit.runtime.scriptrunner import get_script_run_ctx
-    #
-    # ctx = get_script_run_ctx()
-    #
-    # session_info = runtime.get_instance().get_client(ctx.session_id)
-    # # get the remote ip
-    # st.write("Remote IP", session_info.request.remote_ip)
-    # st.write(session_info.request.headers.__dict__)
-    # st.write(session_info.request.headers.get("X-FORWARDED-FOR"))
+    session_info = runtime.get_instance().get_client(ctx.session_id)
+    # get the remote ip
+    st.write("Remote IP", session_info.request.remote_ip)
+    st.write(session_info.request.headers.__dict__)
+    st.write(session_info.request.headers.get("X-FORWARDED-FOR"))
 
     main()
