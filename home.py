@@ -118,7 +118,8 @@ def main():
         )
 
     elif st.session_state["authentication_status"] is False:
-        st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
+        with st.sidebar:
+            st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
         if "failed_login_attempts" in st.session_state:
             try_dict = st.session_state["failed_login_attempts"]
             try_number = try_dict.get(st.session_state["username"], 0)
@@ -135,7 +136,8 @@ def main():
         st.error("Username/password is incorrect.")
         wait_time(try_number)
     elif st.session_state["authentication_status"] is None:
-        st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
+        with st.sidebar:
+            st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
         st.title("Welcome on Carburoam 🚘💸🛢️ newcomer !")
 
         st.warning("👈 Please enter your username and password")

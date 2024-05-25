@@ -5,8 +5,7 @@ from streamlit_geolocation import streamlit_geolocation
 
 from models import CustomStation, Station, User
 from session import db_session
-from sidebar import make_sidebar
-from utils import VERSION, bounding_stations, init_authenticator
+from utils import bounding_stations, init_authenticator
 
 st.set_page_config(
     page_title="Carburoam",
@@ -280,4 +279,4 @@ if st.session_state["authentication_status"]:
 else:
     st.error("You must be logged in to access this page")
 st.sidebar.page_link("home.py", label="🏠 Back to main page")
-make_sidebar(VERSION)
+# make_sidebar(VERSION)
