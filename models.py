@@ -1,7 +1,6 @@
-from typing import List, Optional
+from typing import List
 
 import sqlalchemy as sa
-import utm
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
