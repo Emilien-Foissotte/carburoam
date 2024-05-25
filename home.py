@@ -141,9 +141,10 @@ if __name__ == "__main__":
     ctx = get_script_run_ctx()
 
     session_info = runtime.get_instance().get_client(ctx.session_id)
-    # get the remote ip
-    st.write("Remote IP", session_info.request.remote_ip)
-    st.write(session_info.request.headers.__dict__)
-    st.write(session_info.request.headers.get("X-FORWARDED-FOR"))
+    if session_info is not None:
+        # get the remote ip
+        st.write("Remote IP", session_info.request.remote_ip)
+        st.write(session_info.request.headers.__dict__)
+        st.write(session_info.request.headers.get("X-FORWARDED-FOR"))
 
     main()
