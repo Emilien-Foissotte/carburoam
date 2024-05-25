@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
+import pytz
 import streamlit as st
 
 from applogging import init_logging
@@ -79,8 +80,18 @@ def main():
         get_prices_user(st.session_state["username"])
         st.divider()
         if st.session_state.get("lastjob"):
+            # convert the date to a string
+            last_job_datetime = st.session_state["lastjob"]
+            # convert to CET timezone
+            last_job_datetime = last_job_datetime.replace(tzinfo=pytz.utc)
+            last_job_datetime_paris = last_job_datetime.astimezone(
+                pytz.timezone("Europe/Paris")
+            )
+            last_job_str = datetime.strftime(
+                last_job_datetime_paris, "%A, %d %B %Y - %H:%M"
+            )
             st.metric(
-                datetime.strftime(st.session_state["lastjob"], "%A, %d %B %Y - %H:%M"),
+                last_job_str,
                 "last extract of prices",
             )
         st.caption("Customize your experience ⬇️")
