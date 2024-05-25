@@ -10,9 +10,20 @@ import pytz
 import streamlit as st
 
 from applogging import init_logging
-from utils import WAIT_TIME_SECONDS, get_prices_user, init_authenticator, wait_time
+from sidebar import make_sidebar
+from utils import (
+    VERSION,
+    WAIT_TIME_SECONDS,
+    get_prices_user,
+    init_authenticator,
+    wait_time,
+)
 
 logger = logging.getLogger("gas_station_app")
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
 
 
 def trigger_etl():
@@ -70,7 +81,6 @@ def main():
     with st.sidebar:
         st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
         authenticator.login(location="sidebar")
-        st.page_link("pages/about.py", label="About the app", icon="ℹ️")
     if st.session_state["authentication_status"]:
         logger.info("User logged in")
         authenticator.logout("Logout", "sidebar")
@@ -124,14 +134,34 @@ def main():
         st.error("Username/password is incorrect.")
         wait_time(try_number)
     elif st.session_state["authentication_status"] is None:
+        st.title("Welcome on Carburoam 🚘💸🛢️ newcomer !")
+
         st.warning("👈 Please enter your username and password")
-        st.page_link(
-            "pages/register.py", label="Not registered ? Click here to register"
-        )
-        st.page_link("pages/forgot.py", label="Forgot credentials? Click here for help")
+        c0, c1 = st.columns(2)
+        with c0:
+            st.page_link(
+                "pages/register.py", label="Not registered ? Click here to register"
+            )
+        with c1:
+            st.caption(
+                "*Want to see a demo of the website before register ?"
+                " Sure ! Click on demo on the left 👈*"
+            )
+
+        st.write()
+        c0, c1 = st.columns(2)
+        with c0:
+            st.page_link(
+                "pages/forgot.py", label="Forgot credentials? Click here for help"
+            )
+        with c1:
+            st.caption(
+                "If you didn't entered a real email, don't worry, just DM me ! 🔒"
+            )
 
 
 if __name__ == "__main__":
     f"![](https://emilienfoissotte.goatcounter.com/count?p={os.getenv('TRACKING_NAME')})"
     init_logging()
     main()
+    make_sidebar(VERSION)

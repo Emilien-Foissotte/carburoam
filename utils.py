@@ -27,6 +27,8 @@ from models import Price  # , ProcessingEvent
 from models import GasType, Station, User
 from session import db_session
 
+VERSION = "0.1.0"
+
 #################
 ##AUTHENTICATOR##
 #################

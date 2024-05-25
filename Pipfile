@@ -18,9 +18,12 @@ rtree = "*"
 streamlit-folium = "*"
 streamlit-geolocation = "*"
 boto3 = "*"
+st-social-media-links = "*"
 
 [dev-packages]
 ipython = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.11"

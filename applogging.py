@@ -3,8 +3,6 @@ import logging
 from streamlit import runtime
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-logger = logging.getLogger("gas_station_app")
-
 
 def get_remote_ip() -> str | None:
     """Get remote ip."""
@@ -18,8 +16,7 @@ def get_remote_ip() -> str | None:
         remote_ip = session_info.remote_ip
         # doesn't work in cloud streamlit as remote ip is hosting IP
 
-    except Exception as e:
-        logger.error(f"Error getting remote ip due to {e}")
+    except Exception:
         return None
     return remote_ip
 

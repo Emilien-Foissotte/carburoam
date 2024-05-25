@@ -14,3 +14,6 @@ creategastypes:
 
 deploy:
 	pipenv run streamlit run home.py
+
+test:
+	pipenv run pytest

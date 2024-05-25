@@ -1,12 +1,19 @@
 import logging
 
+import sqlalchemy
 import streamlit as st
 
 from models import User
 from session import db_session
-from utils import dump_config, init_authenticator
+from sidebar import make_sidebar
+from utils import VERSION, dump_config, init_authenticator
 
 logger = logging.getLogger("gas_station_app")
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
+
 
 authenticator, config = init_authenticator()
 
@@ -34,4 +41,5 @@ if st.session_state["authentication_status"] is None:
             dump_config(config)
     except Exception as e:
         st.error(e)
-st.sidebar.page_link("home.py", label="Back to main page 🏠")
+st.sidebar.page_link("home.py", label="🏠 Back to main page")
+make_sidebar(VERSION)

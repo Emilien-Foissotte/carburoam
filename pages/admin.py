@@ -11,9 +11,14 @@ from sqlalchemy.sql import text
 
 from models import CustomStation, User, VerificationCode
 from session import db_session
-from utils import init_authenticator, send_email
+from sidebar import make_sidebar
+from utils import VERSION, init_authenticator, send_email
 
 logger = logging.getLogger("gas_station_app")
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
 
 load_dotenv()
 authenticator, config = init_authenticator()
@@ -102,6 +107,7 @@ if st.session_state["authentication_status"]:
                 if username_forgot_pw:
                     logger.info("New password sent")
                     st.success("New password sent securely")
+                    st.success(f"New password to sent to user is {random_password}")
                     # Random password to be transferred to user securely
                     body = f"Your new password is {random_password}"
                     send_email(
@@ -249,4 +255,5 @@ if st.session_state["authentication_status"]:
                         st.write(output.stdout.decode())
     else:
         st.error("You are not authorized to access this page")
-st.sidebar.page_link("home.py", label="Back to main page 🏠")
+st.sidebar.page_link("home.py", label="🏠 Back to main page ")
+make_sidebar(VERSION)

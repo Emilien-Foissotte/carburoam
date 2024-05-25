@@ -9,9 +9,14 @@ import streamlit as st
 
 from models import User, VerificationCode
 from session import db_session
-from utils import dump_config, init_authenticator, send_email
+from sidebar import make_sidebar
+from utils import VERSION, dump_config, init_authenticator, send_email
 
 logger = logging.getLogger("gas_station_app")
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
 
 authenticator, config = init_authenticator()
 
@@ -31,7 +36,7 @@ with st.expander("Forgot username"):
                 recipients=[email_of_forgotten_username],
             )
             st.success("Username has been sent to your email. Please check your email.")
-        elif username_of_forgotten_username == False:
+        elif not username_of_forgotten_username:
             logger.error("Username not found")
             st.error("Email not found")
     except Exception as e:
@@ -157,4 +162,5 @@ with st.expander("Forgot password"):
                         st.error("Code already deleted")
             else:
                 st.error("Code not found")
-st.sidebar.page_link("home.py", label="Back to main page 🏠")
+st.sidebar.page_link("home.py", label="🏠 Back to main page")
+make_sidebar(VERSION)

@@ -7,6 +7,11 @@ from models import CustomStation, Station, User
 from session import db_session
 from utils import bounding_stations, init_authenticator
 
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
+
 authenticator, config = init_authenticator()
 
 
@@ -258,4 +263,4 @@ if st.session_state["authentication_status"]:
                         st.session_state["stations"] = {}
 else:
     st.error("You must be logged in to access this page")
-st.sidebar.page_link("home.py", label="Back to main page 🏠")
+st.sidebar.page_link("home.py", label="🏠 Back to main page")

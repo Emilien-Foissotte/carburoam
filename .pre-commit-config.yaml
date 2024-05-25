@@ -11,8 +11,8 @@ repos:
     -   id: detect-aws-credentials
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
-    -   id: no-commit-to-branch  # ensure that no-commit reaches other branches than fix/xxxx or feat/xxx
-        args: ['--pattern', '^(?!((fix|feat)\/[a-zA-Z0-9\-_]+)$).*']
+    # -   id: no-commit-to-branch  # ensure that no-commit reaches other branches than fix/xxxx or feat/xxx
+    #     args: ['--pattern', '^(?!((main|fix|feat)\/[a-zA-Z0-9\-_]+)$).*']
 - repo: https://github.com/compilerla/conventional-pre-commit
   rev: v3.0.0
   hooks:

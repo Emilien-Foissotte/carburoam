@@ -8,9 +8,14 @@ from streamlit_geolocation import streamlit_geolocation
 
 from models import GasType, Station
 from session import db_session
-from utils import bounding_stations, get_prices_demo
+from sidebar import make_sidebar
+from utils import VERSION, bounding_stations, get_prices_demo
 
 logger = logging.getLogger("gas_station_app")
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
 
 
 def on_click_center_map(station_id):
@@ -241,4 +246,5 @@ if st_data is not None:
                     # flush the session state for stations
                     st.session_state["stations_demo"] = {}
 
-st.sidebar.page_link("home.py", label="Back to main page 🏠")
+st.sidebar.page_link("home.py", label="🏠 Back to main page")
+make_sidebar(VERSION)

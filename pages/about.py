@@ -2,7 +2,15 @@ import logging
 
 import streamlit as st
 
+from sidebar import make_sidebar
+from utils import VERSION
+
 logger = logging.getLogger("gas_station_app")
+
+st.set_page_config(
+    page_title="Carburoam",
+    page_icon="⛽",
+)
 
 """
 # About this project 🚀
@@ -30,7 +38,9 @@ st.write(
     "posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)"
 )
 
-st.write(
-    "Have a look at the Github repository [here](https://github.com/Emilien-Foissotte/stationsdashboard/)"
+st.success(
+    "[Star the repo](https://github.com/SiddhantSadangi/pdf-workdesk) to show your :heart:",
+    icon="⭐",
 )
 st.sidebar.page_link("home.py", label="Back to main page 🏠")
+make_sidebar(VERSION)
