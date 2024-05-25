@@ -16,7 +16,6 @@ def get_remote_ip() -> str | None:
 
         session_info = runtime.get_instance().get_client(ctx.session_id)
         remote_ip = session_info.remote_ip
-
         # doesn't work in cloud streamlit as remote ip is hosting IP
 
     except Exception as e:
