@@ -5,7 +5,8 @@ from streamlit_geolocation import streamlit_geolocation
 
 from models import CustomStation, Station, User
 from session import db_session
-from utils import bounding_stations, init_authenticator
+from sidebar import make_sidebar
+from utils import VERSION, bounding_stations, init_authenticator
 
 st.set_page_config(
     page_title="Carburoam",
@@ -161,6 +162,9 @@ if st.session_state["authentication_status"]:
     # load stations
     if "stations" not in st.session_state:
         st.session_state["stations"] = {}
+    # display station toast
+    if "toast_display" not in st.session_state:
+        st.session_state["toast_display"] = False
 
     # list of stations
     # map of stations
@@ -213,6 +217,10 @@ if st.session_state["authentication_status"]:
             st_data.get("bounds", {}).get("_southWest", {}).get("lat") is not None
             and st_data.get("zoom", 16) > 12
         ):
+            if not st.session_state["toast_display"]:
+                st.toast("Stations display activated ✅")
+                st.session_state["toast_display"] = True
+
             stations = bounding_stations(st_data["bounds"])
             # udpate stations by sync dict in session state and stations
             # remove stations not in the bounds
@@ -224,6 +232,14 @@ if st.session_state["authentication_status"]:
             for station in stations:
                 if station.id not in st.session_state["stations"].keys():
                     st.session_state["stations"][station.id] = station
+        elif (
+            st_data.get("bounds", {}).get("_southWest", {}).get("lat") is not None
+            and st_data.get("zoom", 16) < 12
+        ):
+            if st.session_state["toast_display"]:
+                st.toast("Stations display deactivated ❌")
+                st.session_state["toast_display"] = False
+
         if st_data.get("last_object_clicked_tooltip") is not None:
             st.session_state["last_object_clicked_popup"] = st_data[
                 "last_object_clicked_popup"
@@ -264,3 +280,4 @@ if st.session_state["authentication_status"]:
 else:
     st.error("You must be logged in to access this page")
 st.sidebar.page_link("home.py", label="🏠 Back to main page")
+make_sidebar(VERSION)
