@@ -134,17 +134,4 @@ def main():
 if __name__ == "__main__":
     f"![](https://emilienfoissotte.goatcounter.com/count?p={os.getenv('TRACKING_NAME')})"
     init_logging()
-
-    from streamlit import runtime
-    from streamlit.runtime.scriptrunner import get_script_run_ctx
-
-    ctx = get_script_run_ctx()
-
-    session_info = runtime.get_instance().get_client(ctx.session_id)
-    if session_info is not None:
-        # get the remote ip
-        st.write("Remote IP", session_info.request.remote_ip)
-        st.write(session_info.request.headers.__dict__)
-        st.write(session_info.request.headers.get("X-FORWARDED-FOR"))
-
     main()
