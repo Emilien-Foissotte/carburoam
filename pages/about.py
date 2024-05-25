@@ -17,7 +17,7 @@ This webpage is a demonstration of use of a fun Data Engineering project.  \n  \
 The goal is :
 - To scrap public API to retrieve price of Gas Stations in France 🇫🇷 \n \n
 - Allow users to save their favorites gas stations and pick them from a map 🌍
-- Allow users to save their favorite gas types and see the relevant prices of their nearby stations 👤 
+- Allow users to save their favorite gas types and see the relevant prices of their nearby stations 👤
 \n
 """
 )

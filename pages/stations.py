@@ -5,7 +5,7 @@ from streamlit_geolocation import streamlit_geolocation
 
 from models import CustomStation, Station, User
 from session import db_session
-from utils import bounding_stations, dump_config, init_authenticator
+from utils import bounding_stations, init_authenticator
 
 authenticator, config = init_authenticator()
 
