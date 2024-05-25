@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ccc1eee5e6135944939800fa384bfb8ea1442dc6a24a23546ce660ae00835ce2"
+            "sha256": "537b676a723088f686b26bda52d2a922eabfb59d48058f3d60b45a2c1786526b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1095,12 +1095,12 @@
         },
         "streamlit-folium": {
             "hashes": [
-                "sha256:8b28ead558228197af9c6fe7bfa588e297461b1dae0e5b3f6976d08a3541b491",
-                "sha256:f4b72488ffb1c85d972a38b6c6956364e73cac928d4be9f413b5a6bdd82047ac"
+                "sha256:3a23ea67b3ce06d269ae9e999f9040a685ad194486dd51689abf9eefb6bcb936",
+                "sha256:a1079a7b0a4dda462e387ce622ad2dd0269c3e72d7de4f0cbda50e8764340fb5"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.20.0"
+            "version": "==0.18.0"
         },
         "streamlit-geolocation": {
             "hashes": [
