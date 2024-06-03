@@ -189,6 +189,19 @@ if st.session_state["authentication_status"]:
                 )
         st.divider()
         st.subheader("Admin actions on ETL")
+        # check if alive
+        if os.path.exists("pid.txt"):
+            with open("pid.txt", "r") as file:
+                pid = int(file.read())
+            # check if the process is still running
+            status = subprocess.run(["ps", "-p", str(pid)], stdout=subprocess.PIPE)
+            if status.returncode == 0:
+                st.success("ETL is running")
+            else:
+                st.error("ETL is not running")
+        else:
+            st.error("No pid file found")
+        # restart ETL
         with st.expander("Show status files for ETL Job"):
             files = list(Path("outputs/").glob("*.txt"))
             # add a form to remove output logs files

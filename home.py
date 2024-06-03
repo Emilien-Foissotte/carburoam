@@ -29,6 +29,11 @@ st.set_page_config(
 def trigger_etl():
     """
     Trigger the ETL process in a subprocess.
+
+    Args:
+        None
+    Returns:
+        None
     """
     # create a new uuid for process opening
     str_uuid = str(uuid.uuid4())
@@ -38,39 +43,79 @@ def trigger_etl():
         subprocess.Popen([f"{sys.executable}", "utils.py"], stdout=out, stderr=err)
 
 
+def check_last_job(multiplier=1.0):
+    """
+    Check if the last job is recent, if not, start a new job.
+
+    Args:
+        multiplier (float): a multiplier to the WAIT_TIME_SECONDS to increase the time
+            to wait before starting a new job. Default is 1.0.
+    Returns:
+        None
+    """
+    if os.path.exists("lastjob.txt"):
+        # check the last job date, do not start subprocess if recent
+        with open("lastjob.txt", "r") as file:
+            date = file.read()
+            # parse the date (dumped as datetime.now())
+            date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
+            st.session_state["lastjob"] = date
+            # if the detla from now is greater than WAIT_TIME_SECONDS
+            if (datetime.now() - date).total_seconds() > WAIT_TIME_SECONDS * multiplier:
+                logger.info("Last job was not recent, starting new job")
+                trigger_etl()
+            else:
+                logger.info("Last job was recent, skipping")
+
+
+def cleanup_output_files():
+    """
+    Remove output files older than 1 day.
+    """
+    for file in Path("outputs").glob("*.txt"):
+        # get last modified date
+        try:
+            last_modified = datetime.fromtimestamp(file.stat().st_mtime)
+            # if the file is older than 1 day, remove it
+            if (datetime.now() - last_modified).days > 1:
+                logger.info(f"Removing {file}")
+                file.unlink()
+        except FileNotFoundError:
+            # it means another process has deleted the file
+            pass
+
+
 def main():
     # check if the pid file exists
     if not os.path.exists("pid.txt"):
-        logger.info("No pid file found, creating one")
+        logger.info("No pid file found, creating a job")
         # if it doesn't exist, trigger the subprocess job
         # delete and remove output files under outputs
-        for file in Path("outputs").glob("*.txt"):
-            # get last modified date
-            try:
-                last_modified = datetime.fromtimestamp(file.stat().st_mtime)
-                # if the file is older than 1 day, remove it
-                if (datetime.now() - last_modified).days > 1:
-                    logger.info(f"Removing {file}")
-                    file.unlink()
-            except FileNotFoundError:
-                # it means another process has deleted the file
-                pass
-
+        cleanup_output_files()
+        # launch routine in case no pid
         if os.path.exists("lastjob.txt"):
-            # check the last job date, do not start subprocess if recent
-            with open("lastjob.txt", "r") as file:
-                date = file.read()
-                # parse the date (dumped as datetime.now())
-                date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
-                st.session_state["lastjob"] = date
-                # if the detla from now is greater than WAIT_TIME_SECONDS
-                if (datetime.now() - date).total_seconds() > WAIT_TIME_SECONDS:
-                    logger.info("Last job was not recent, starting new job")
-                    trigger_etl()
-                else:
-                    logger.info("Last job was recent, skipping")
+            check_last_job()
         else:
             trigger_etl()
+    else:
+        # check if pid is still running
+        with open("pid.txt", "r") as file:
+            pid = int(file.read())
+        # check if the process is still running
+        status = subprocess.run(["ps", "-p", str(pid)], stdout=subprocess.PIPE)
+        if status.returncode != 0:
+            logger.info("PID not found, creating a new job")
+            # delete and remove output files under outputs
+            cleanup_output_files()
+            # launch routine in case no pid
+            if os.path.exists("lastjob.txt"):
+                check_last_job(multiplier=1.2)
+            else:
+                trigger_etl()
+        else:
+            logger.info("PID found, skipping job creation")
+
+    # display info about last job if any
     if os.path.exists("lastjob.txt"):
         with open("lastjob.txt", "r") as file:
             date = file.read()
