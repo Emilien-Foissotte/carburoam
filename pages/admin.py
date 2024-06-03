@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import psutil
 import requests
 import streamlit as st
 from dotenv import load_dotenv
@@ -194,8 +195,8 @@ if st.session_state["authentication_status"]:
             with open("pid.txt", "r") as file:
                 pid = int(file.read())
             # check if the process is still running
-            status = subprocess.run(["ps", "-p", str(pid)], stdout=subprocess.PIPE)
-            if status.returncode == 0:
+            process_etl = psutil.Process(pid)
+            if process_etl.is_running():
                 st.success("ETL is running")
             else:
                 st.error("ETL is not running")

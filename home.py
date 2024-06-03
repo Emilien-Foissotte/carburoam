@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
+import psutil
 import pytz
 import streamlit as st
 
@@ -102,8 +103,8 @@ def main():
         with open("pid.txt", "r") as file:
             pid = int(file.read())
         # check if the process is still running
-        status = subprocess.run(["ps", "-p", str(pid)], stdout=subprocess.PIPE)
-        if status.returncode != 0:
+        process_etl = psutil.Process(pid)
+        if not process_etl.is_running():
             logger.info("PID not found, creating a new job")
             # delete and remove output files under outputs
             cleanup_output_files()

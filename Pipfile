@@ -19,6 +19,7 @@ streamlit-folium = "0.18.0"
 streamlit-geolocation = "*"
 boto3 = "*"
 st-social-media-links = "*"
+psutil = "*"
 
 [dev-packages]
 ipython = "*"
