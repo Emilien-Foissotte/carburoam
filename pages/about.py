@@ -39,7 +39,7 @@ st.write(
 )
 
 st.success(
-    "[Star the repo](https://github.com/SiddhantSadangi/pdf-workdesk) to show your :heart:",
+    "[Star the repo](https://github.com/Emilien-Foissotte/stationsdashboard/) to show your :heart:",
     icon="⭐",
 )
 st.sidebar.page_link("home.py", label="Back to main page 🏠")
