@@ -1,3 +1,6 @@
+[logger]
+level = "info"
+
 [client]
 showSidebarNavigation = false
 
