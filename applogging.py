@@ -8,7 +8,6 @@ def init_logging():
 
     # create a custom logger
     logger = logging.getLogger("gas_station_app")
-    print(logger.handlers)
     if logger.handlers:  # logger is already setup, don't setup again
         return
     logger.propagate = False
