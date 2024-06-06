@@ -113,8 +113,24 @@ def main():
                 check_last_job(multiplier=1.2)
             else:
                 trigger_etl()
+        elif os.path.exists("lastjob.txt"):
+            with open("lastjob.txt", "r") as file:
+                date = file.read()
+            # parse the date (dumped as datetime.now())
+            date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
+            st.session_state["lastjob"] = date
+            # if the detla from now is greater than WAIT_TIME_SECONDS
+            if (datetime.now() - date).total_seconds() > WAIT_TIME_SECONDS * 1.2:
+                logger.info("Process is stall, new job is not created")
+                # kill the process
+                process_etl.kill()
+                # check if pid file still exists
+                if os.path.exists("pid.txt"):
+                    os.remove("pid.txt")
+                cleanup_output_files()
+                trigger_etl()
         else:
-            logger.info("PID found, skipping job creation")
+            logger.info("Process is creating a job, waiting")
 
     # display info about last job if any
     if os.path.exists("lastjob.txt"):
