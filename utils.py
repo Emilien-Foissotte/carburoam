@@ -411,12 +411,12 @@ def save_database():
         )
         # list object by file name, gas type and custom stations
         response_gastypes = s3.list_objects_v2(
-            Bucket=BUCKET_NAME_STORE, prefix="gastype_followed"
+            Bucket=BUCKET_NAME_STORE, Prefix="gastype_followed"
         )
         files_gastype = response_gastypes["Contents"]
         files_gastype = sorted(files_gastype, key=lambda x: x["LastModified"])
         response_customstations = s3.list_objects_v2(
-            Bucket=BUCKET_NAME_STORE, prefix="custom_stations"
+            Bucket=BUCKET_NAME_STORE, Prefix="custom_stations"
         )
         files_customstations = response_customstations["Contents"]
         files_customstations = sorted(
