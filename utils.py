@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime
 from email.mime.text import MIMEText
+from io import BytesIO
 from pathlib import Path
 from threading import Timer
 
@@ -531,6 +532,120 @@ def restore_database():
                 except sqlalchemy.exc.IntegrityError:
                     db_session.rollback()
                     print("Custom station already exists")
+    elif os.environ.get("LOAD_MODE") == "remote":
+        print("Restore remotely")
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        )
+        # list object by file name, gas type and custom stations
+        response_gastypes = s3.list_objects_v2(
+            Bucket=BUCKET_NAME_STORE, Prefix="gastype_followed"
+        )
+        files_gastype = response_gastypes["Contents"]
+        files_gastype = sorted(files_gastype, key=lambda x: x["LastModified"])
+        response_customstations = s3.list_objects_v2(
+            Bucket=BUCKET_NAME_STORE, Prefix="custom_stations"
+        )
+        files_customstations = response_customstations["Contents"]
+        files_customstations = sorted(
+            files_customstations, key=lambda x: x["LastModified"]
+        )
+        # get the most recent file
+        file_gastype = files_gastype[-1]
+        file_customstations = files_customstations[-1]
+        if files_gastype is not None:
+            # check the date of the file and ensure it is more recent than the last transfer
+            # check the date using file name
+            filename_gastype = file_gastype["Key"]
+            # remove the leading part
+            filename_gastype = filename_gastype.replace("gastype_followed_", "")
+            # remove the extension
+            filename_gastype = filename_gastype.replace(".csv", "")
+            # read the date from the filename
+            date_gastype = datetime.strptime(filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z")
+            transfer = db_session.query(Transfer).order_by(Transfer.date.desc()).first()
+            if transfer is None or date_gastype.timestamp() > transfer.date.timestamp():
+                # read the file
+                response = s3.get_object(
+                    Bucket=BUCKET_NAME_STORE, Key=file_gastype["Key"]
+                )
+                body = response["Body"].read()
+                # read the file from bytes with pandas
+                df_gastype = pd.read_csv(BytesIO(body))
+                # loop over the dataframe and add the gas types to the users
+                for index, row in df_gastype.iterrows():
+                    user = (
+                        db_session.query(User)
+                        .filter(User.username == row["username"])
+                        .first()
+                    )
+                    if user is not None:
+                        gas_type = (
+                            db_session.query(GasType)
+                            .filter(GasType.name == row["gastype"])
+                            .first()
+                        )
+                        if gas_type is not None and gas_type not in user.gastypes:
+                            user.gastypes.append(gas_type)
+                            db_session.add(user)
+                try:
+                    db_session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    db_session.rollback()
+                    print("Gas type already exists")
+            # do the same for custom stations
+            if files_customstations is not None:
+                # check the date of the file and ensure it is more recent than the last transfer
+                # check the date using file name
+                filename_customstations = file_customstations["Key"]
+                # remove the leading part
+                filename_customstations = filename_customstations.replace(
+                    "custom_stations_", ""
+                )
+                # remove the extension
+                filename_customstations = filename_customstations.replace(".csv", "")
+                # read the date from the filename
+                date_customstations = datetime.strptime(
+                    filename_customstations, "%Y-%m-%d %H:%M:%S.%f%z"
+                )
+                if (
+                    transfer is None
+                    or date_customstations.timestamp() > transfer.date.timestamp()
+                ):
+                    # read the file
+                    response = s3.get_object(
+                        Bucket=BUCKET_NAME_STORE, Key=file_customstations["Key"]
+                    )
+                    body = response["Body"].read()
+                    df_customstations = pd.read_csv(BytesIO(body))
+                    # loop over the dataframe and add the custom stations to the users
+                    for index, row in df_customstations.iterrows():
+                        user = (
+                            db_session.query(User)
+                            .filter(User.username == row["username"])
+                            .first()
+                        )
+                        if user is not None:
+                            station = (
+                                db_session.query(Station)
+                                .filter(Station.id == row["id"])
+                                .first()
+                            )
+                            if station is not None and station.id not in [
+                                stat.id for stat in user.stations
+                            ]:
+                                custom_station = CustomStation(
+                                    custom_name=row["custom_name"], id=row["id"]
+                                )
+                                user.stations.append(custom_station)
+                                db_session.add(user)
+                    try:
+                        db_session.commit()
+                    except sqlalchemy.exc.IntegrityError:
+                        db_session.rollback()
+                        print("Custom station already exists")
 
 
 def bounding_stations(bounds):
