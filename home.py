@@ -41,7 +41,9 @@ def trigger_etl():
     with open(f"outputs/stdout_{str_uuid}.txt", "wb") as out, open(
         f"outputs/stderr_{str_uuid}.txt", "wb"
     ) as err:
-        subprocess.Popen([f"{sys.executable}", "utils.py"], stdout=out, stderr=err)
+        subprocess.Popen(
+            [f"{sys.executable}", "utils.py", "--action", "etl"], stdout=out, stderr=err
+        )
 
 
 def check_last_job(multiplier=1.0):
@@ -103,8 +105,12 @@ def main():
         with open("pid.txt", "r") as file:
             pid = int(file.read())
         # check if the process is still running
-        process_etl = psutil.Process(pid)
-        if not process_etl.is_running():
+        try:
+            process_etl = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            process_etl = None
+            Path("pid.txt").unlink(missing_ok=True)
+        if process_etl is None or not process_etl.is_running():
             logger.info("PID not found, creating a new job")
             # delete and remove output files under outputs
             cleanup_output_files()

@@ -1,3 +1,5 @@
+import argparse
+import hashlib
 import os
 import signal
 import smtplib
@@ -12,22 +14,21 @@ from threading import Timer
 
 import boto3
 import pandas as pd
+import pytz
 import requests
 import sqlalchemy
 import streamlit as st
 import streamlit_authenticator as stauth
-import utm
 import yaml
 from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from tqdm import tqdm
 from yaml.loader import SafeLoader
 
-from models import Price  # , ProcessingEvent
-from models import GasType, Station, User
+from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 #################
 ##AUTHENTICATOR##
@@ -263,7 +264,285 @@ def dump_stations():
     Path("PrixCarburants_instantane_ruptures.xml").unlink(missing_ok=True)
 
 
+def get_hash_of_file(file_path):
+    """
+    Get the hash of a file.
+
+    Args:
+        file_path (str): The path to the file to hash.
+        verbose (int): The level of verbosity to use.
+    Returns:
+        str: The hash of the file.
+    """
+    hash_md5 = hashlib.md5()
+    try:
+        with open(file_path, "rb") as file:
+            for chunk in iter(lambda: file.read(4096), b""):
+                hash_md5.update(chunk)
+    except Exception as e:
+        # Handle file open exception
+        print(f"Error reading file {file_path}: {e}")
+    return hash_md5.hexdigest()
+
+
+def save_database():
+    """
+    Save the database to a file and export to S3 bucket.
+
+    Returns:
+        None
+    """
+    # no need to save stations, save only custom stations and gas types followed by users
+    # create directory save
+    Path("save").mkdir(parents=True, exist_ok=True)
+    # save the gas types followed to a csv file
+    # loop over users
+    df_gastypes = pd.DataFrame(columns=["username", "gastype"], data=[])
+    for user in db_session.query(User).all():
+        for gas in user.gastypes:
+            new_record = pd.DataFrame(
+                [{"username": user.username, "gastype": gas.name}]
+            )
+            # add the line to dataframe
+            df_gastypes = pd.concat([df_gastypes, new_record], ignore_index=True)
+
+    # add the datetime of the save in the filename
+    now = datetime.now()
+    # convert to utc to avoid timezone issues
+    now = now.astimezone(pytz.utc)
+
+    # save the dataframe to a csv file
+    filename_gastype_followed = Path("save") / Path(f"gastype_followed_{now}.csv")
+    nb_gastypes = df_gastypes.shape[0]
+    df_gastypes.to_csv(filename_gastype_followed, index=False)
+    hash_gastype = get_hash_of_file(filename_gastype_followed)
+
+    # loop over users and custom stations
+    df_custom_stations = pd.DataFrame(
+        columns=["username", "custom_name", "id"], data=[]
+    )
+    for user in db_session.query(User).all():
+        for station in user.stations:
+            new_record = pd.DataFrame(
+                [
+                    {
+                        "username": user.username,
+                        "custom_name": station.custom_name,
+                        "id": station.id,
+                    }
+                ]
+            )
+            # add the line to dataframe
+            df_custom_stations = pd.concat(
+                [df_custom_stations, new_record], ignore_index=True
+            )
+    filename_custom_stations = Path("save") / Path(f"custom_stations_{now}.csv")
+    # get the lenght of df_custom_stations
+    nb_custom_stations = df_custom_stations.shape[0]
+    df_custom_stations.to_csv(filename_custom_stations, index=False)
+    hash_custom_stations = get_hash_of_file(filename_custom_stations)
+
+    if os.environ.get("LOAD_MODE") == "local":
+        print(f"File saved locally at {now}")
+    elif os.environ.get("LOAD_MODE") == "remote":
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        )
+        # put the two files in the bucket
+        with open(filename_gastype_followed, "rb") as file:
+            body = file.read()
+            s3.put_object(
+                Bucket=BUCKET_NAME_STORE,
+                Key=f"gastype_followed_{now}.csv",
+                Body=body,
+            )
+        with open(filename_custom_stations, "rb") as file:
+            body = file.read()
+            s3.put_object(
+                Bucket=BUCKET_NAME_STORE,
+                Key=f"custom_stations_{now}.csv",
+                Body=body,
+            )
+
+    # create a new transfer object into DB
+
+    transfer = Transfer(
+        date=now,
+        export=True,
+        gas_types_followed_inserted=nb_gastypes,
+        hash_gas_types_followed=hash_gastype,
+        custom_stations_inserted=nb_custom_stations,
+        hash_custom_stations=hash_custom_stations,
+        local=True if os.environ.get("LOAD_MODE") == "local" else False,
+    )
+    try:
+        db_session.add(transfer)
+        db_session.commit()
+        print(f"Export done at {now}")
+    except sqlalchemy.exc.IntegrityError:
+        db_session.rollback()
+        print("Transfer already exists")
+
+    # cleanup old files (save up to 3 saves) on disk or on S3 if remote.
+    # remove the oldest one first
+    if os.environ.get("LOAD_MODE") == "local":
+        # sort the files by creation date and by name, followed gastypes* and custom stations*
+        files_gastype = []
+        files_customstations = []
+        for file in Path("save").iterdir():
+            if "gastype_followed" in file.name:
+                files_gastype.append(file)
+            elif "custom_stations" in file.name:
+                files_customstations.append(file)
+        # sort the files by creation date
+        files_gastype = sorted(files_gastype, key=os.path.getctime)
+        files_customstations = sorted(files_customstations, key=os.path.getctime)
+        all_files = files_gastype[:-3] + files_customstations[:-3]
+        for file in all_files:
+            file.unlink()
+        print("Old files locally removed")
+    elif os.environ.get("LOAD_MODE") == "remote":
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        )
+        # list object by file name, gas type and custom stations
+        response_gastypes = s3.list_objects_v2(
+            Bucket=BUCKET_NAME_STORE, prefix="gastype_followed"
+        )
+        files_gastype = response_gastypes["Contents"]
+        files_gastype = sorted(files_gastype, key=lambda x: x["LastModified"])
+        response_customstations = s3.list_objects_v2(
+            Bucket=BUCKET_NAME_STORE, prefix="custom_stations"
+        )
+        files_customstations = response_customstations["Contents"]
+        files_customstations = sorted(
+            files_customstations, key=lambda x: x["LastModified"]
+        )
+        all_files = files_gastype[:-3] + files_customstations[:-3]
+        for file in all_files:
+            s3.delete_object(Bucket=BUCKET_NAME_STORE, Key=file["Key"])
+        print("Old files on S3 removed")
+
+
+def restore_database():
+    """
+    Restore elements dumped.
+    """
+    if os.environ.get("LOAD_MODE") == "local":
+        print("Restore locally")
+        # read the last transfer
+        transfer = db_session.query(Transfer).order_by(Transfer.date.desc()).first()
+        # get the most recent file for each object, custom stations and gas types followed
+        files_gastype = []
+        files_customstations = []
+        for file in Path("save").iterdir():
+            if "gastype_followed" in file.name:
+                files_gastype.append(file)
+            elif "custom_stations" in file.name:
+                files_customstations.append(file)
+        # sort the files by creation date
+        files_gastype = sorted(files_gastype, key=os.path.getctime)
+        files_customstations = sorted(files_customstations, key=os.path.getctime)
+        # get the most recent file
+        file_gastype = files_gastype[-1]
+        file_customstations = files_customstations[-1]
+        if files_gastype is not None:
+            # check the date of the file and ensure it is more recent than the last transfer
+            # check the date using file name
+            filename_gastype = file_gastype.name
+            # remove the leading part
+            filename_gastype = filename_gastype.replace("gastype_followed_", "")
+            # remove the extension
+            filename_gastype = filename_gastype.replace(".csv", "")
+            # read the date from the filename
+            date_gastype = datetime.strptime(filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z")
+            if transfer is None or date_gastype.timestamp() > transfer.date.timestamp():
+                # read the file
+                df_gastype = pd.read_csv(file_gastype)
+                # loop over the dataframe and add the gas types to the users
+                for index, row in df_gastype.iterrows():
+                    user = (
+                        db_session.query(User)
+                        .filter(User.username == row["username"])
+                        .first()
+                    )
+                    if user is not None:
+                        gas_type = (
+                            db_session.query(GasType)
+                            .filter(GasType.name == row["gastype"])
+                            .first()
+                        )
+                        if gas_type is not None and gas_type not in user.gastypes:
+                            user.gastypes.append(gas_type)
+                            db_session.add(user)
+                try:
+                    db_session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    db_session.rollback()
+                    print("Gas type already exists")
+        # do the same for custom stations
+        if files_customstations is not None:
+            # check the date of the file and ensure it is more recent than the last transfer
+            # check the date using file name
+            filename_customstations = file_customstations.name
+            # remove the leading part
+            filename_customstations = filename_customstations.replace(
+                "custom_stations_", ""
+            )
+            # remove the extension
+            filename_customstations = filename_customstations.replace(".csv", "")
+            # read the date from the filename
+            date_customstations = datetime.strptime(
+                filename_customstations, "%Y-%m-%d %H:%M:%S.%f%z"
+            )
+            if (
+                transfer is None
+                or date_customstations.timestamp() > transfer.date.timestamp()
+            ):
+                # read the file
+                df_customstations = pd.read_csv(file_customstations)
+                # loop over the dataframe and add the custom stations to the users
+                for index, row in df_customstations.iterrows():
+                    user = (
+                        db_session.query(User)
+                        .filter(User.username == row["username"])
+                        .first()
+                    )
+                    if user is not None:
+                        station = (
+                            db_session.query(Station)
+                            .filter(Station.id == row["id"])
+                            .first()
+                        )
+                        if station is not None and station.id not in [
+                            stat.id for stat in user.stations
+                        ]:
+                            custom_station = CustomStation(
+                                custom_name=row["custom_name"], id=row["id"]
+                            )
+                            user.stations.append(custom_station)
+                            db_session.add(user)
+                try:
+                    db_session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    db_session.rollback()
+                    print("Custom station already exists")
+
+
 def bounding_stations(bounds):
+    """
+    Filter the stations based on the bounds.
+
+    Args:
+        bounds: dict
+
+    Returns:
+        nearby_states: list of Station
+    """
     # bounds_example = {
     #   "_southWest": {
     #     "lat": 47.98739410650529,
@@ -288,66 +567,6 @@ def bounding_stations(bounds):
         )
         .all()
     )
-    return nearby_states
-
-
-def k_stations(geoloc, k):
-    """
-    This function returns the k nearest stations to a given geolocation.
-
-    Args:
-        geoloc: tuple (float:lon, float:lat)
-        k: int
-    """
-    stations_candidates = []
-    search_dist, increment = (3000, 1000)
-    while len(stations_candidates) < k:
-        stations_candidates = candidate_stations(geoloc=geoloc, max_dist=search_dist)
-        search_dist += increment
-    return stations_candidates
-
-
-def candidate_stations(geoloc, max_dist):
-    """
-    This function returns the stations within a given distance from a geolocation.
-
-    Args:
-        geoloc: tuple (float:lon, float:lat)
-        max_dist: int
-    """
-    (lon, lat) = geoloc
-
-    easting_utm, northing_utm, zone_number, zone_letter = utm.from_latlon(lat, lon)
-    lat_max, lon_max = utm.to_latlon(
-        easting=easting_utm + max_dist,
-        northing=northing_utm + max_dist,
-        zone_number=zone_number,
-        zone_letter=zone_letter,
-    )
-
-    lat_min, lon_min = utm.to_latlon(
-        easting=easting_utm - max_dist,
-        northing=northing_utm - max_dist,
-        zone_number=zone_number,
-        zone_letter=zone_letter,
-    )
-    # convert to WSG84
-    lat_min = lat_min * 100000
-    lon_min = lon_min * 100000
-    lat_max = lat_max * 100000
-    lon_max = lon_max * 100000
-
-    nearby_states = (
-        db_session.query(Station)
-        .filter(
-            Station.latitude > lat_min,
-            Station.latitude < lat_max,
-            Station.longitude > lon_min,
-            Station.longitude < lon_max,
-        )
-        .all()
-    )
-
     return nearby_states
 
 
@@ -484,6 +703,7 @@ def send_email(subject, body, recipients):
 ##################
 
 WAIT_TIME_SECONDS = 60 * 60 * 6  # each 6 hours
+WAIT_TIME_SECONDS_SAVE = 60 * 60 * 24  # each 24 hours
 
 
 class ProgramKilled(Exception):
@@ -530,9 +750,16 @@ def etl_job():
             file.write(str(os.getpid()))
         # start etl at beginning of the thread
         main_etl()
+        # check if the test user has custom stations, if not restore the database
+        user = db_session.query(User).filter_by(username="test").first()
+        if len(user.stations) == 0:
+            print("No custom stations for test user, restoring database")
+            restore_database()
         signal.signal(signal.SIGTERM, signal_handler)
         signal.signal(signal.SIGINT, signal_handler)
         job = Timer(WAIT_TIME_SECONDS, main_etl)
+        job_save = Timer(WAIT_TIME_SECONDS_SAVE, save_database)
+        job_save.start()
         job.start()
 
         while True:
@@ -544,6 +771,7 @@ def etl_job():
                 if os.path.exists("pid.txt"):
                     os.remove("pid.txt")
                 job.cancel()
+                job_save.cancel()
                 break
     else:
         print("PID file already found, job as already started. Exiting...")
@@ -551,14 +779,16 @@ def etl_job():
 
 
 if __name__ == "__main__":
-    # loadXML()
-    # create_gastypes()
-    # dump_stations()
-    # geoloc = (-0.6789, 47.9217)
-    # geoloc = (48.70671, 2.07337)
-    # geoloc = (-0.6789, 47.9217)
-    # list_stations = k_stations(geoloc=geoloc,k=5)
-    #
-    # for station in list_stations:
-    #     print(station.to_dict())
-    etl_job()
+    # parse kwargs from script
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--action")
+    args = parser.parse_args()
+    if args.action == "etl":
+        etl_job()
+    elif args.action == "save":
+        save_database()
+    elif args.action == "restore":
+        restore_database()
+    else:
+        print(f"Error : Bad action specified, {args.action} unknown. Exiting...")
+        exit(1)

@@ -117,3 +117,15 @@ class Price(Base):
     station_id = sa.Column(sa.Integer, sa.ForeignKey("stations.id"), primary_key=True)
     updated_at = sa.Column(sa.DateTime, nullable=False)
     price = sa.Column(sa.Float, nullable=False)
+
+
+class Transfer(Base):
+    __tablename__ = "transfers"
+    id = sa.Column(sa.Integer, primary_key=True)
+    date = sa.Column(sa.DateTime, nullable=False)
+    export = sa.Column(sa.Boolean, nullable=False)
+    local = sa.Column(sa.Boolean, nullable=False)
+    gas_types_followed_inserted = sa.Column(sa.Integer, nullable=False)
+    hash_gas_types_followed = sa.Column(sa.String, nullable=False)
+    custom_stations_inserted = sa.Column(sa.Integer, nullable=False)
+    hash_custom_stations = sa.Column(sa.String, nullable=False)

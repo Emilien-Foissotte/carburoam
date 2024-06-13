@@ -13,7 +13,13 @@ from sqlalchemy.sql import text
 from models import CustomStation, User, VerificationCode
 from session import db_session
 from sidebar import make_sidebar
-from utils import VERSION, init_authenticator, send_email
+from utils import (
+    VERSION,
+    init_authenticator,
+    restore_database,
+    save_database,
+    send_email,
+)
 
 logger = logging.getLogger("gas_station_app")
 st.set_page_config(
@@ -253,6 +259,30 @@ if st.session_state["authentication_status"]:
                         st.success("File removed")
                     else:
                         st.error("No lastjob file found")
+        # create a form to save database
+        with st.expander("Save database"):
+            with st.form(key="form_save_database"):
+                submitted = st.form_submit_button("Save")
+                if submitted:
+                    logger.info("User triggered database save")
+                    with st.spinner("Saving database"):
+                        try:
+                            save_database()
+                            st.success("Database saved")
+                        except Exception as e:
+                            st.error(e)
+        # create a form to restore database
+        with st.expander("Restore database"):
+            with st.form(key="form_restore_database"):
+                submitted = st.form_submit_button("Restore")
+                if submitted:
+                    logger.info("User triggered database restore")
+                    with st.spinner("Restoring database"):
+                        try:
+                            restore_database()
+                            st.success("Database restored")
+                        except Exception as e:
+                            st.error(e)
         st.divider()
         st.subheader("Admin actions on Host")
         with st.expander("Trigger shell commands on host"):
