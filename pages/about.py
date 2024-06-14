@@ -15,7 +15,7 @@ st.set_page_config(
 """
 # About this project 🚀
 
-[![Star](https://img.shields.io/github/stars/Emilien-Foissotte/stationsdashboard.svg?logo=github&style=social)](https://github.com/Emilien-Foissotte/stationsdashboard/stargazers)
+[![Star](https://img.shields.io/github/stars/Emilien-Foissotte/carburoam.svg?logo=github&style=social)](https://github.com/Emilien-Foissotte/carburoam/stargazers)
 [![Follow](https://img.shields.io/github/followers/Emilien-Foissotte.svg?style=social)](https://github.com/Emilien-Foissotte)
 """
 
@@ -39,7 +39,7 @@ st.write(
 )
 
 st.success(
-    "[Star the repo](https://github.com/Emilien-Foissotte/stationsdashboard/) to show your :heart:",
+    "[Star the repo](https://github.com/Emilien-Foissotte/carburoam/) to show your :heart:",
     icon="⭐",
 )
 st.sidebar.page_link("home.py", label="Back to main page 🏠")

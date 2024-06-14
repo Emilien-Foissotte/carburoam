@@ -433,6 +433,8 @@ def restore_database():
     """
     Restore elements dumped.
     """
+    df_gastypes = None
+    df_customstations = None
     if os.environ.get("LOAD_MODE") == "local":
         print("Restore locally")
         # read the last transfer
@@ -463,29 +465,7 @@ def restore_database():
             date_gastype = datetime.strptime(filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z")
             if transfer is None or date_gastype.timestamp() > transfer.date.timestamp():
                 # read the file
-                df_gastype = pd.read_csv(file_gastype)
-                # loop over the dataframe and add the gas types to the users
-                for index, row in df_gastype.iterrows():
-                    user = (
-                        db_session.query(User)
-                        .filter(User.username == row["username"])
-                        .first()
-                    )
-                    if user is not None:
-                        gas_type = (
-                            db_session.query(GasType)
-                            .filter(GasType.name == row["gastype"])
-                            .first()
-                        )
-                        if gas_type is not None and gas_type not in user.gastypes:
-                            user.gastypes.append(gas_type)
-                            db_session.add(user)
-                try:
-                    db_session.commit()
-                except sqlalchemy.exc.IntegrityError:
-                    db_session.rollback()
-                    print("Gas type already exists")
-        # do the same for custom stations
+                df_gastypes = pd.read_csv(file_gastype)
         if files_customstations is not None:
             # check the date of the file and ensure it is more recent than the last transfer
             # check the date using file name
@@ -506,32 +486,6 @@ def restore_database():
             ):
                 # read the file
                 df_customstations = pd.read_csv(file_customstations)
-                # loop over the dataframe and add the custom stations to the users
-                for index, row in df_customstations.iterrows():
-                    user = (
-                        db_session.query(User)
-                        .filter(User.username == row["username"])
-                        .first()
-                    )
-                    if user is not None:
-                        station = (
-                            db_session.query(Station)
-                            .filter(Station.id == row["id"])
-                            .first()
-                        )
-                        if station is not None and station.id not in [
-                            stat.id for stat in user.stations
-                        ]:
-                            custom_station = CustomStation(
-                                custom_name=row["custom_name"], id=row["id"]
-                            )
-                            user.stations.append(custom_station)
-                            db_session.add(user)
-                try:
-                    db_session.commit()
-                except sqlalchemy.exc.IntegrityError:
-                    db_session.rollback()
-                    print("Custom station already exists")
     elif os.environ.get("LOAD_MODE") == "remote":
         print("Restore remotely")
         s3 = boto3.client(
@@ -573,28 +527,7 @@ def restore_database():
                 )
                 body = response["Body"].read()
                 # read the file from bytes with pandas
-                df_gastype = pd.read_csv(BytesIO(body))
-                # loop over the dataframe and add the gas types to the users
-                for index, row in df_gastype.iterrows():
-                    user = (
-                        db_session.query(User)
-                        .filter(User.username == row["username"])
-                        .first()
-                    )
-                    if user is not None:
-                        gas_type = (
-                            db_session.query(GasType)
-                            .filter(GasType.name == row["gastype"])
-                            .first()
-                        )
-                        if gas_type is not None and gas_type not in user.gastypes:
-                            user.gastypes.append(gas_type)
-                            db_session.add(user)
-                try:
-                    db_session.commit()
-                except sqlalchemy.exc.IntegrityError:
-                    db_session.rollback()
-                    print("Gas type already exists")
+                df_gastypes = pd.read_csv(BytesIO(body))
             # do the same for custom stations
             if files_customstations is not None:
                 # check the date of the file and ensure it is more recent than the last transfer
@@ -620,32 +553,78 @@ def restore_database():
                     )
                     body = response["Body"].read()
                     df_customstations = pd.read_csv(BytesIO(body))
-                    # loop over the dataframe and add the custom stations to the users
-                    for index, row in df_customstations.iterrows():
-                        user = (
-                            db_session.query(User)
-                            .filter(User.username == row["username"])
-                            .first()
-                        )
-                        if user is not None:
-                            station = (
-                                db_session.query(Station)
-                                .filter(Station.id == row["id"])
-                                .first()
-                            )
-                            if station is not None and station.id not in [
-                                stat.id for stat in user.stations
-                            ]:
-                                custom_station = CustomStation(
-                                    custom_name=row["custom_name"], id=row["id"]
-                                )
-                                user.stations.append(custom_station)
-                                db_session.add(user)
-                    try:
-                        db_session.commit()
-                    except sqlalchemy.exc.IntegrityError:
-                        db_session.rollback()
-                        print("Custom station already exists")
+    if df_customstations is not None:
+        # loop over the dataframe and add the custom stations to the users
+        # iterate over unique users
+        users = df_customstations["username"].unique()
+        # filter out users that are not in the database
+        users = [
+            user
+            for user in users
+            if db_session.query(User).filter(User.username == user).first() is not None
+        ]
+        for user in users:
+            db_user = db_session.query(User).filter(User.username == user).first()
+            df_user_customstations = df_customstations.loc[
+                df_customstations["username"] == user
+            ]
+            # we won't remove custom station as there is no auto creation mechanism
+            for index, row in df_user_customstations.iterrows():
+                station = (
+                    db_session.query(Station).filter(Station.id == row["id"]).first()
+                )
+                if station is not None and station.id not in [
+                    stat.id for stat in db_user.stations
+                ]:
+                    custom_station = CustomStation(
+                        custom_name=row["custom_name"], id=row["id"]
+                    )
+                    db_user.stations.append(custom_station)
+                    db_session.add(db_user)
+        try:
+            db_session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            db_session.rollback()
+            print("Custom station already exists")
+        else:
+            print(f"Custom stations restored {os.environ.get('LOAD_MODE')}")
+    # do the same for gastypes
+    if df_gastypes is not None:
+        # loop over the dataframe and add the gas types to the users
+        # iterate over unique users
+        users = df_gastypes["username"].unique()
+        # filter out users that are not in the database
+        users = [
+            user
+            for user in users
+            if db_session.query(User).filter(User.username == user).first() is not None
+        ]
+        for user in users:
+            db_user = db_session.query(User).filter(User.username == user).first()
+            df_user_gastypes = df_gastypes.loc[df_gastypes["username"] == user]
+            # first remove gas types in user that are not in the file
+            for gas in (
+                db_session.query(User).filter(User.username == user).first().gastypes
+            ):
+                if gas.name not in df_user_gastypes["gastype"].values:
+                    db_user.gastypes.remove(gas)
+                    db_session.add(db_user)
+            for index, row in df_user_gastypes.iterrows():
+                gas_type = (
+                    db_session.query(GasType)
+                    .filter(GasType.name == row["gastype"])
+                    .first()
+                )
+                if gas_type is not None and gas_type not in db_user.gastypes:
+                    db_user.gastypes.append(gas_type)
+                    db_session.add(db_user)
+        try:
+            db_session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            db_session.rollback()
+            print("Gas type already exists")
+        else:
+            print(f"Gas types restored {os.environ.get('LOAD_MODE')}")
 
 
 def bounding_stations(bounds):
