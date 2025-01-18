@@ -26,7 +26,19 @@ an Open Source dashboard to help users get cheapest prices at gas stations in �
 
 ## Table of Contents
 
-[__TOC__]
+1. [What is Carburoam?](#what-is-carburoam)
+2. [Developer notes](#developer-notes)
+   1. [Data flow](#data-flow)
+   2. [Environment management](#environment-management)
+3. [Vulnerability Disclosure](#vulnerability-disclosure)
+   1. [Authorization](#authorization)
+   2. [Guidelines](#guidelines)
+   3. [Test methods](#test-methods)
+   4. [Scope](#scope)
+   5. [Reporting a vulnerability](#reporting-a-vulnerability)
+4. [Contributing](#contributing)
+5. [Acknowledgements](#acknowledgements)
+6. [License](#license)
 
 ## What is Carburoam?
 
@@ -42,6 +54,8 @@ It showcase a Data engineering project which :
 
 ## Developer notes
 
+### Data flow
+
 ![ETL workflow](medias/workflow.png)
 
 We run on a [Streamlit](https://streamlit.io/) backend, with an AWS S3 distant storage to persist
@@ -50,11 +64,17 @@ data accross reboot of the Streamlit server.
 A more complete overview of the stack is available in my blog post
 ⚙️ [here](https://emilien-foissotte.github.io/posts/posts/2024/05/streamlit-gas-stations/?utm_campaign=GasWebApp)
 
+### Environment management
+
 To manage local and distant environments, it uses an `.ENV` file, which shall contain theses keys :
 
 - GMAIL_APP_PASSWORD : app password for streamlit gmail account
 - LOAD_MODE="remote|local" : If remote, need AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 - BUCKET_NAME_STORE: Uri of the bucket where config file is stored, if using remote load mode
+
+## Contributing
+
+Even though this project is not intended to be developed by the community, any suggestions or pull requests are happily welcomed.
 
 ## Vulnerability Disclosure
 
@@ -89,7 +109,7 @@ This policy applies to the following systems and services:
 
 ### Reporting a vulnerability
 
-Please send an email (email address at the end [paragraph](https://emilien-foissotte.github.io/me/))
+Please send an email (email address at the end [paragraph](https://emilien-foissotte.github.io/me/) of About blog page)
 
 ## Acknowledgements
 
