@@ -7,7 +7,7 @@
 <p align="center">
  <!-- add python version badge -->
   <a href="https://github.com/Emilien-Foissotte/carburoam/blob/main/Pipfile">
-    <img src="https://img.shields.io/badge/python-3.11-red?logo=python" alt="Python version">
+    <img src="https://img.shields.io/badge/python-3.12-red?logo=python" alt="Python version">
   </a>
   <a href="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml">
     <img src="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml/badge.svg" alt="Keep Alive">
@@ -23,6 +23,13 @@
 
 Welcome to the [Carburoam](https://carburoam.streamlit.app/about) repository, it fuels
 an Open Source dashboard to help users get cheapest prices at gas stations in 🇫🇷
+
+## Try it now
+
+<p align="center">
+    <a href="https://carburoam.streamlit.app/demo" target="_blank"><img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Open in Streamlit" style="height: 60px !important;width: 217px !important;">
+    </a>
+</p>
 
 ## Table of Contents
 
