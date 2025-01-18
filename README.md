@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/python-3.11-red?logo=python" alt="Python version">
   </a>
   <a href="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml">
-    <img src="https://github.com/forem/forem/actions/workflows/keep-alive.yml/badge.svg" alt="Keep Alive">
+    <img src="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml/badge.svg" alt="Keep Alive">
   </a>
   <img src="https://img.shields.io/github/commit-activity/w/emilien-foissotte/carburoam" alt="GitHub commit activity">
   <a href="https://github.com/emilien-foissotte/carburoam/issues?q=is%3Aissue+is%3Aopen+label%3A%22ready+for+dev%22">
