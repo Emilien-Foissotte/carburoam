@@ -24,6 +24,10 @@
 Welcome to the [Carburoam](https://carburoam.streamlit.app/about) repository, it fuels
 an Open Source dashboard to help users get cheapest prices at gas stations in 🇫🇷
 
+## Table of Contents
+
+[__TOC__]
+
 ## What is Carburoam?
 
 Carburoam is an open-source built dashboard on top of Python, Streamlit and ❤️
@@ -94,6 +98,8 @@ Thank you to [Siddhant Sadangi](https://github.com/SiddhantSadangi) for the stre
 
 Thank you to [Devoteam A Cloud](https://acloud.devoteam.com/) for republishing my blog post on [Rebirth blog](https://rebirth.devoteam.com/2024/06/25/data-pipeline-etl-streamlit/)
 
+Thank you to [Nsit-Flaticon](https://www.flaticon.com/free-icons/lemur) for the lemur icon
+
 ## License
 
 Have a look at [License file](https://github.com/Emilien-Foissotte/carburoam/blob/main/LICENSE.txt)
@@ -101,10 +107,9 @@ Have a look at [License file](https://github.com/Emilien-Foissotte/carburoam/blo
 <br>
 
 <p align="center">
-  <img alt="Sloan, the sloth mascot" width="250px" src="https://thepracticaldev.s3.amazonaws.com/uploads/user/profile_image/31047/af153cd6-9994-4a68-83f4-8ddf3e13f0bf.jpg">
+  <img alt="Lemur, EF's mascot" width="250px" src="medias/lemur.png">
   <br>
   <strong>Happy Coding</strong> ❤️
-<div data-udata-dataset="6407d088d4e23dc662022e2c"></div><script data-udata="https://www.data.gouv.fr/" src="https://static.data.gouv.fr/static/oembed.js" async defer></script>
 </p>
 
 [⬆ Back to Top](#table-of-contents)
