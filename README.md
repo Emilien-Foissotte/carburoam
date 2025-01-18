@@ -42,6 +42,8 @@ It showcase a Data engineering project which :
 
 ## Developer notes
 
+![ETL workflow](medias/workflow.png)
+
 We run on a [Streamlit](https://streamlit.io/) backend, with an AWS S3 distant storage to persist
 data accross reboot of the Streamlit server.
 
@@ -107,7 +109,7 @@ Have a look at [License file](https://github.com/Emilien-Foissotte/carburoam/blo
 <br>
 
 <p align="center">
-  <img alt="Lemur, EF's mascot" width="250px" src="medias/lemur.png">
+  <img alt="Lemur, EF's mascot" width="250px" src="https://emilienfoissotte.fr/public/sharefolder/lemur.jpg">
   <br>
   <strong>Happy Coding</strong> ❤️
 </p>
