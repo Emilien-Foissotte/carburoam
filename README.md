@@ -7,7 +7,7 @@
 <p align="center">
  <!-- add python version badge -->
   <a href="https://github.com/Emilien-Foissotte/carburoam/blob/main/Pipfile">
-    <img src="https://img.shields.io/badge/python-3.11-red?logo=python" alt="Python version">
+    <img src="https://img.shields.io/badge/python-3.12-red?logo=python" alt="Python version">
   </a>
   <a href="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml">
     <img src="https://github.com/emilien-foissotte/carburoam/actions/workflows/keep-alive.yml/badge.svg" alt="Keep Alive">

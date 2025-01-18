@@ -127,7 +127,6 @@ def init_authenticator():
         config["cookie"]["name"],
         config["cookie"]["key"],
         config["cookie"]["expiry_days"],
-        config["preauthorized"],
     )
     return authenticator, config
 
