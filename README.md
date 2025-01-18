@@ -24,6 +24,13 @@
 Welcome to the [Carburoam](https://carburoam.streamlit.app/about) repository, it fuels
 an Open Source dashboard to help users get cheapest prices at gas stations in 🇫🇷
 
+## Try it now
+
+<p align="center">
+    <a href="https://carburoam.streamlit.app/demo" target="_blank"><img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Open in Streamlit" style="height: 60px !important;width: 217px !important;">
+    </a>
+</p>
+
 ## Table of Contents
 
 1. [What is Carburoam?](#what-is-carburoam)
