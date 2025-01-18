@@ -34,16 +34,17 @@ def make_sidebar(version: str):
 
         st.html(
             """
-            <div style="text-align:center; font-size:12px; color:lightgrey">
-                <hr style="margin-bottom: 6%; margin-top: 6%;">
-                <a rel="license" href="https://choosealicense.com/licenses/mit/">
-                    <img alt="MIT License" style="border-width:0"
-                        src="https://www.licen.cc/images/license-logos/licen.cc-mit.png" />
-                </a><br><br>
-                This work is licensed under a <b>MIT License</b>.<br>
-                You can use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                copies of the Software. Crediting derivatives to Emilien Foissotte would
-                be appreciated but not required.
-            </div>
-        """
+                <div style="text-align:center; font-size:12px; color:lightgrey">
+                    <hr style="margin-bottom: 6%; margin-top: 6%;">
+                    <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                        <img alt="Creative Commons License" style="border-width:0"
+                            src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                    </a><br><br>
+                    This work is licensed under a <b>Creative Commons
+                        Attribution-NonCommercial-ShareAlike 4.0 International License</b>.<br>
+                    You can modify and build upon this work non-commercially. All derivatives should be
+                    credited to Émilien Foissotte and
+                    be licenced under the same terms.
+                </div>
+            """
         )
