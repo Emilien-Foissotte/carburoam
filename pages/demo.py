@@ -3,6 +3,7 @@ from datetime import datetime
 
 import folium
 import streamlit as st
+from sqlalchemy import func
 from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
 
@@ -29,7 +30,21 @@ def on_click_center_map(station_id):
 
 logger.info("Demo page loaded")
 if "stations_followed_demo" not in st.session_state:
-    st.session_state["stations_followed_demo"] = []
+    random_list = []
+    # get random stations
+    stations = db_session.query(Station).order_by(func.random()).limit(3)
+    for station in stations:
+        random_list.append(
+            {
+                "id": station.id,
+                "custom_name": station.address.upper()
+                + ", "
+                + station.town.upper()
+                + " - "
+                + station.zip_code,
+            }
+        )
+    st.session_state["stations_followed_demo"] = random_list
 if "gastypes_followed_demo" not in st.session_state:
     st.session_state["gastypes_followed_demo"] = ["SP95", "Gazole"]
 
@@ -47,7 +62,7 @@ get_prices_demo(
 )
 if st.session_state.get("lastjob"):
     st.metric(
-        datetime.strftime(st.session_state["lastjob"], "%Y-%m-%d"),
+        datetime.strftime(st.session_state["lastjob"], "%A, %d %B %Y - %H:%M"),
         "last extract of prices",
     )
 st.divider()

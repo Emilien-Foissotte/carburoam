@@ -1,5 +1,5 @@
 # borrowed from https://github.com/JeanMILPIED/reparatorAI/tree/main/probe-action
-name: Trigger Probe of Deployed App on a CRON Schedule
+name: keep alive streamlit
 on:
   schedule:
     - cron: '0 */48 * * *'
