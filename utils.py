@@ -29,7 +29,7 @@ from yaml.loader import SafeLoader
 from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 #################
 ##AUTHENTICATOR##
@@ -882,6 +882,11 @@ if __name__ == "__main__":
         save_database()
     elif args.action == "restore":
         restore_database()
+    elif args.action == "create_gastypes":
+        create_gastypes()
+    elif args.action == "dump_stations":
+        loadXML()
+        dump_stations()
     else:
         print(f"Error : Bad action specified, {args.action} unknown. Exiting...")
         exit(1)
