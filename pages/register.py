@@ -23,7 +23,7 @@ if st.session_state["authentication_status"] is None:
             email_of_registered_user,
             username_of_registered_user,
             name_of_registered_user,
-        ) = authenticator.register_user(pre_authorization=False)
+        ) = authenticator.register_user()
         if email_of_registered_user:
             logger.info("User registered")
             new_user = User(
