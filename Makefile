@@ -31,6 +31,6 @@ test:  ## Launch tests
 
 # Example: make version=0.0.1 edit-version
 version?=0.0.1
-edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml
+edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml.
 	sed -i '' "s/^VERSION = \".*\"/VERSION = \"$(version)\"/" utils.py
 	sed -i '' "s/^version = \".*\"/version = \"$(version)\"/" pyproject.toml
