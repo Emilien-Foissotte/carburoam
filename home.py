@@ -162,7 +162,8 @@ def main():
         st.write(f'Welcome on Carburoam, *{st.session_state["name"]}*')
         st.title("Stations 🚘💸🛢️")
         # create a dataframe from the custom stations and the prices
-        get_prices_user(st.session_state["username"])
+        if st.session_state["username"] is not None:
+            get_prices_user(st.session_state["username"])
         st.divider()
         if st.session_state.get("lastjob"):
             # convert the date to a string
