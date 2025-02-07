@@ -29,7 +29,7 @@ from yaml.loader import SafeLoader
 from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 
 #################
 ##AUTHENTICATOR##
@@ -68,16 +68,21 @@ def load_users_to_db(config):
             db_session.add(user)
         # if user exists, update the email and name
         else:
-            user = db_session.query(User).filter(User.username == username).first()
+            user = (
+                db_session.query(User).filter(User.username == username).first()
+            )
             # if email or name has changed
             email_changed = (
-                user.email == config["credentials"]["usernames"][username]["email"]
+                user.email
+                == config["credentials"]["usernames"][username]["email"]
             )
             if email_changed:
-                user.email = config["credentials"]["usernames"][username]["email"]
-            name_changed = user.name = config["credentials"]["usernames"][username][
-                "name"
-            ]
+                user.email = config["credentials"]["usernames"][username][
+                    "email"
+                ]
+            name_changed = user.name = config["credentials"]["usernames"][
+                username
+            ]["name"]
             if name_changed:
                 user.name = config["credentials"]["usernames"][username]["name"]
             if email_changed or name_changed:
@@ -118,7 +123,9 @@ def init_authenticator():
         )
         config = yaml.load(response["Body"].read(), Loader=SafeLoader)
     else:
-        raise NotImplementedError(f"{os.environ.get('LOAD_MODE')} mode is supported")
+        raise NotImplementedError(
+            f"{os.environ.get('LOAD_MODE')} mode is supported"
+        )
 
     load_users_to_db(config)
 
@@ -158,7 +165,9 @@ def dump_config(config):
             Body=yaml_data,
         )
     else:
-        raise NotImplementedError(f"{os.environ.get('LOAD_MODE')} mode is supported")
+        raise NotImplementedError(
+            f"{os.environ.get('LOAD_MODE')} mode is supported"
+        )
 
 
 ###################
@@ -193,7 +202,14 @@ def loadXML():
 
 
 def create_gastypes():
-    gas_dict = {"Gazole": 1, "SP95": 2, "SP98": 6, "E85": 3, "GPLc": 4, "E10": 5}
+    gas_dict = {
+        "Gazole": 1,
+        "SP95": 2,
+        "SP98": 6,
+        "E85": 3,
+        "GPLc": 4,
+        "E10": 5,
+    }
 
     for name, xml_id in gas_dict.items():
         if not db_session.query(GasType).filter(GasType.name == name).first():
@@ -221,7 +237,11 @@ def dump_stations():
         address = pdv.find("adresse").text
         town = pdv.find("ville").text
         zip_code = pdv.get("cp")
-        if not db_session.query(Station).filter(Station.id == id_station).first():
+        if (
+            not db_session.query(Station)
+            .filter(Station.id == id_station)
+            .first()
+        ):
             station = Station(
                 id=id_station,
                 latitude=latitude,
@@ -239,7 +259,9 @@ def dump_stations():
             maj = datetime.strptime(maj_str, "%Y-%m-%d %H:%M:%S")
             price_from_db = (
                 db_session.query(Price)
-                .filter(Price.gastype_id == id_price, Price.station_id == id_station)
+                .filter(
+                    Price.gastype_id == id_price, Price.station_id == id_station
+                )
                 .first()
             )
             if price_from_db is None:
@@ -304,7 +326,9 @@ def save_database():
                 [{"username": user.username, "gastype": gas.name}]
             )
             # add the line to dataframe
-            df_gastypes = pd.concat([df_gastypes, new_record], ignore_index=True)
+            df_gastypes = pd.concat(
+                [df_gastypes, new_record], ignore_index=True
+            )
 
     # add the datetime of the save in the filename
     now = datetime.now()
@@ -312,7 +336,9 @@ def save_database():
     now = now.astimezone(pytz.utc)
 
     # save the dataframe to a csv file
-    filename_gastype_followed = Path("save") / Path(f"gastype_followed_{now}.csv")
+    filename_gastype_followed = Path("save") / Path(
+        f"gastype_followed_{now}.csv"
+    )
     nb_gastypes = df_gastypes.shape[0]
     df_gastypes.to_csv(filename_gastype_followed, index=False)
     hash_gastype = get_hash_of_file(filename_gastype_followed)
@@ -398,7 +424,9 @@ def save_database():
                 files_customstations.append(file)
         # sort the files by creation date
         files_gastype = sorted(files_gastype, key=os.path.getctime)
-        files_customstations = sorted(files_customstations, key=os.path.getctime)
+        files_customstations = sorted(
+            files_customstations, key=os.path.getctime
+        )
         all_files = files_gastype[:-3] + files_customstations[:-3]
         for file in all_files:
             file.unlink()
@@ -437,7 +465,9 @@ def restore_database():
     if os.environ.get("LOAD_MODE") == "local":
         print("Restore locally")
         # read the last transfer
-        transfer = db_session.query(Transfer).order_by(Transfer.date.desc()).first()
+        transfer = (
+            db_session.query(Transfer).order_by(Transfer.date.desc()).first()
+        )
         # get the most recent file for each object, custom stations and gas types followed
         files_gastype = []
         files_customstations = []
@@ -448,7 +478,9 @@ def restore_database():
                 files_customstations.append(file)
         # sort the files by creation date
         files_gastype = sorted(files_gastype, key=os.path.getctime)
-        files_customstations = sorted(files_customstations, key=os.path.getctime)
+        files_customstations = sorted(
+            files_customstations, key=os.path.getctime
+        )
         # get the most recent file
         file_gastype = files_gastype[-1]
         file_customstations = files_customstations[-1]
@@ -461,8 +493,13 @@ def restore_database():
             # remove the extension
             filename_gastype = filename_gastype.replace(".csv", "")
             # read the date from the filename
-            date_gastype = datetime.strptime(filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z")
-            if transfer is None or date_gastype.timestamp() > transfer.date.timestamp():
+            date_gastype = datetime.strptime(
+                filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z"
+            )
+            if (
+                transfer is None
+                or date_gastype.timestamp() > transfer.date.timestamp()
+            ):
                 # read the file
                 df_gastypes = pd.read_csv(file_gastype)
         if files_customstations is not None:
@@ -474,7 +511,9 @@ def restore_database():
                 "custom_stations_", ""
             )
             # remove the extension
-            filename_customstations = filename_customstations.replace(".csv", "")
+            filename_customstations = filename_customstations.replace(
+                ".csv", ""
+            )
             # read the date from the filename
             date_customstations = datetime.strptime(
                 filename_customstations, "%Y-%m-%d %H:%M:%S.%f%z"
@@ -517,9 +556,18 @@ def restore_database():
             # remove the extension
             filename_gastype = filename_gastype.replace(".csv", "")
             # read the date from the filename
-            date_gastype = datetime.strptime(filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z")
-            transfer = db_session.query(Transfer).order_by(Transfer.date.desc()).first()
-            if transfer is None or date_gastype.timestamp() > transfer.date.timestamp():
+            date_gastype = datetime.strptime(
+                filename_gastype, "%Y-%m-%d %H:%M:%S.%f%z"
+            )
+            transfer = (
+                db_session.query(Transfer)
+                .order_by(Transfer.date.desc())
+                .first()
+            )
+            if (
+                transfer is None
+                or date_gastype.timestamp() > transfer.date.timestamp()
+            ):
                 # read the file
                 response = s3.get_object(
                     Bucket=BUCKET_NAME_STORE, Key=file_gastype["Key"]
@@ -537,14 +585,17 @@ def restore_database():
                     "custom_stations_", ""
                 )
                 # remove the extension
-                filename_customstations = filename_customstations.replace(".csv", "")
+                filename_customstations = filename_customstations.replace(
+                    ".csv", ""
+                )
                 # read the date from the filename
                 date_customstations = datetime.strptime(
                     filename_customstations, "%Y-%m-%d %H:%M:%S.%f%z"
                 )
                 if (
                     transfer is None
-                    or date_customstations.timestamp() > transfer.date.timestamp()
+                    or date_customstations.timestamp()
+                    > transfer.date.timestamp()
                 ):
                     # read the file
                     response = s3.get_object(
@@ -560,17 +611,22 @@ def restore_database():
         users = [
             user
             for user in users
-            if db_session.query(User).filter(User.username == user).first() is not None
+            if db_session.query(User).filter(User.username == user).first()
+            is not None
         ]
         for user in users:
-            db_user = db_session.query(User).filter(User.username == user).first()
+            db_user = (
+                db_session.query(User).filter(User.username == user).first()
+            )
             df_user_customstations = df_customstations.loc[
                 df_customstations["username"] == user
             ]
             # we won't remove custom station as there is no auto creation mechanism
             for index, row in df_user_customstations.iterrows():
                 station = (
-                    db_session.query(Station).filter(Station.id == row["id"]).first()
+                    db_session.query(Station)
+                    .filter(Station.id == row["id"])
+                    .first()
                 )
                 if station is not None and station.id not in [
                     stat.id for stat in db_user.stations
@@ -596,14 +652,20 @@ def restore_database():
         users = [
             user
             for user in users
-            if db_session.query(User).filter(User.username == user).first() is not None
+            if db_session.query(User).filter(User.username == user).first()
+            is not None
         ]
         for user in users:
-            db_user = db_session.query(User).filter(User.username == user).first()
+            db_user = (
+                db_session.query(User).filter(User.username == user).first()
+            )
             df_user_gastypes = df_gastypes.loc[df_gastypes["username"] == user]
             # first remove gas types in user that are not in the file
             for gas in (
-                db_session.query(User).filter(User.username == user).first().gastypes
+                db_session.query(User)
+                .filter(User.username == user)
+                .first()
+                .gastypes
             ):
                 if gas.name not in df_user_gastypes["gastype"].values:
                     db_user.gastypes.remove(gas)
@@ -670,11 +732,17 @@ def get_prices_user(user_name):
     gastypes_followed_id = [gastype.xml_id for gastype in user.gastypes]
     for custom_station in user.stations:
         # get prices for each custom station
-        prices = db_session.query(Price).filter_by(station_id=custom_station.id).all()
+        prices = (
+            db_session.query(Price)
+            .filter_by(station_id=custom_station.id)
+            .all()
+        )
         for price in prices:
             if str(price.gastype_id) in gastypes_followed_id:
                 gas_type = (
-                    db_session.query(GasType).filter_by(xml_id=price.gastype_id).first()
+                    db_session.query(GasType)
+                    .filter_by(xml_id=price.gastype_id)
+                    .first()
                 )
                 data["Name"].append(custom_station.custom_name)
                 data["Type"].append(gas_type.name)
@@ -718,16 +786,24 @@ def get_prices_demo(followed_stations_list, followed_gastypes_list):
     for custom_station in followed_stations_list:
         # get prices for each custom station
         custom_station_id = int(custom_station["id"])
-        prices = db_session.query(Price).filter_by(station_id=custom_station_id).all()
+        prices = (
+            db_session.query(Price)
+            .filter_by(station_id=custom_station_id)
+            .all()
+        )
         followed_gastypes_id_list = []
         for gas_name in followed_gastypes_list:
-            gas_type = db_session.query(GasType).filter_by(name=gas_name).first()
+            gas_type = (
+                db_session.query(GasType).filter_by(name=gas_name).first()
+            )
             if gas_type:
                 followed_gastypes_id_list.append(int(gas_type.xml_id))
         for price in prices:
             if price.gastype_id in followed_gastypes_id_list:
                 gas_type = (
-                    db_session.query(GasType).filter_by(xml_id=price.gastype_id).first()
+                    db_session.query(GasType)
+                    .filter_by(xml_id=price.gastype_id)
+                    .first()
                 )
                 data["Name"].append(custom_station.get("custom_name"))
                 data["Type"].append(gas_type.name)
@@ -888,5 +964,7 @@ if __name__ == "__main__":
         loadXML()
         dump_stations()
     else:
-        print(f"Error : Bad action specified, {args.action} unknown. Exiting...")
+        print(
+            f"Error : Bad action specified, {args.action} unknown. Exiting..."
+        )
         exit(1)

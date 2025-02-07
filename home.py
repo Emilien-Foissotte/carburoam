@@ -38,11 +38,14 @@ def trigger_etl():
     """
     # create a new uuid for process opening
     str_uuid = str(uuid.uuid4())
-    with open(f"outputs/stdout_{str_uuid}.txt", "wb") as out, open(
-        f"outputs/stderr_{str_uuid}.txt", "wb"
-    ) as err:
+    with (
+        open(f"outputs/stdout_{str_uuid}.txt", "wb") as out,
+        open(f"outputs/stderr_{str_uuid}.txt", "wb") as err,
+    ):
         subprocess.Popen(
-            [f"{sys.executable}", "utils.py", "--action", "etl"], stdout=out, stderr=err
+            [f"{sys.executable}", "utils.py", "--action", "etl"],
+            stdout=out,
+            stderr=err,
         )
 
 
@@ -51,8 +54,8 @@ def check_last_job(multiplier=1.0):
     Check if the last job is recent, if not, start a new job.
 
     Args:
-        multiplier (float): a multiplier to the WAIT_TIME_SECONDS to increase the time
-            to wait before starting a new job. Default is 1.0.
+        multiplier (float): a multiplier to the WAIT_TIME_SECONDS to increase
+            the time to wait before starting a new job. Default is 1.0.
     Returns:
         None
     """
@@ -64,7 +67,9 @@ def check_last_job(multiplier=1.0):
             date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
             st.session_state["lastjob"] = date
             # if the detla from now is greater than WAIT_TIME_SECONDS
-            if (datetime.now() - date).total_seconds() > WAIT_TIME_SECONDS * multiplier:
+            if (
+                datetime.now() - date
+            ).total_seconds() > WAIT_TIME_SECONDS * multiplier:
                 logger.info("Last job was not recent, starting new job")
                 trigger_etl()
             else:
@@ -126,7 +131,9 @@ def main():
             date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
             st.session_state["lastjob"] = date
             # if the detla from now is greater than WAIT_TIME_SECONDS
-            if (datetime.now() - date).total_seconds() > WAIT_TIME_SECONDS * 1.2:
+            if (
+                datetime.now() - date
+            ).total_seconds() > WAIT_TIME_SECONDS * 1.2:
                 logger.info("Process is stall, new job is not created")
                 # kill the process
                 process_etl.kill()
@@ -175,44 +182,59 @@ def main():
         st.caption("Customize your experience ⬇️")
         if st.session_state["username"] == "admin":
             st.title("Admin dashboard 🛠️")
-            st.page_link("pages/admin.py", label="Click here to go to admin dashboard")
+            st.page_link(
+                "pages/admin.py", label="Click here to go to admin dashboard"
+            )
         st.title("Profile dashboard 📝")
         st.page_link(
-            "pages/profile.py", label="Click here to go to your profile dashboard"
+            "pages/profile.py",
+            label="Click here to go to your profile dashboard",
         )
         st.title("Stations dashboard ⛽")
         st.page_link(
-            "pages/stations.py", label="Click here to go to your stations dashboard"
+            "pages/stations.py",
+            label="Click here to go to your stations dashboard",
         )
 
     elif st.session_state["authentication_status"] is False:
         with st.sidebar:
-            st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
+            st.page_link(
+                "pages/demo.py", label="Demo without registration", icon="👀"
+            )
         if "failed_login_attempts" in st.session_state:
             try_dict = st.session_state["failed_login_attempts"]
             try_number = try_dict.get(st.session_state["username"], 0)
-            logger.warning(f"User {st.session_state['username']} failed to login once")
+            logger.warning(
+                f"User {st.session_state['username']} failed to login once"
+            )
         else:
             try_number = 0
         if try_number > 1:
             logger.warning(
-                f"User {st.session_state['username']} failed to login several times"
+                (
+                    f"User {st.session_state['username']} failed "
+                    "to login several times"
+                )
             )
             st.page_link(
-                "pages/forgot.py", label="Forgot credentials? Click here for help"
+                "pages/forgot.py",
+                label="Forgot credentials? Click here for help",
             )
         st.error("Username/password is incorrect.")
         wait_time(try_number)
     elif st.session_state["authentication_status"] is None:
         with st.sidebar:
-            st.page_link("pages/demo.py", label="Demo without registration", icon="👀")
+            st.page_link(
+                "pages/demo.py", label="Demo without registration", icon="👀"
+            )
         st.title("Welcome on Carburoam 🚘💸🛢️ newcomer !")
 
         st.warning("👈 Please enter your username and password")
         c0, c1 = st.columns(2)
         with c0:
             st.page_link(
-                "pages/register.py", label="Not registered ? Click here to register"
+                "pages/register.py",
+                label="Not registered ? Click here to register",
             )
         with c1:
             st.caption(
@@ -224,7 +246,8 @@ def main():
         c0, c1 = st.columns(2)
         with c0:
             st.page_link(
-                "pages/forgot.py", label="Forgot credentials? Click here for help"
+                "pages/forgot.py",
+                label="Forgot credentials? Click here for help",
             )
         with c1:
             st.caption(

@@ -1,6 +1,6 @@
 [project]
 name = "carburoam"
-version = "0.4.0"
+version = "0.5.0"
 description = " The first open-source live Gas Station price dashboard."
 license = "BSD-3-Clause"
 readme = "README.md"
@@ -32,3 +32,7 @@ dev = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
 ]
+
+[tool.ruff]
+# Allow lines to be as long as 120.
+line-length = 80

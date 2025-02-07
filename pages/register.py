@@ -17,7 +17,21 @@ st.set_page_config(
 
 authenticator, config = init_authenticator()
 
-if st.session_state["authentication_status"] is None:
+st.title("Register to Carburoam 🚘💸🛢️")
+
+st.write(st.session_state["authentication_status"])
+
+
+if st.session_state["authentication_status"]:
+    name = st.session_state["name"]
+    # ask to logout before registering
+    st.warning(
+        (
+            f"You are already logged in {name}, "
+            "please logout before attempting to register"
+        )
+    )
+else:
     try:
         (
             email_of_registered_user,
@@ -37,7 +51,12 @@ if st.session_state["authentication_status"] is None:
             except sqlalchemy.exc.IntegrityError:
                 db_session.rollback()
                 st.error("Username or email already exists")
-            st.success("User registered successfully")
+            st.success(
+                (
+                    "User registered successfully, "
+                    f"welcome {name_of_registered_user}"
+                )
+            )
             dump_config(config)
     except Exception as e:
         st.error(e)

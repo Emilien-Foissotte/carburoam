@@ -127,8 +127,6 @@ Thank you to [Siddhant Sadangi](https://github.com/SiddhantSadangi) for the stre
 
 Thank you to [Devoteam A Cloud](https://acloud.devoteam.com/) for republishing my blog post on [Rebirth blog](https://rebirth.devoteam.com/2024/06/25/data-pipeline-etl-streamlit/)
 
-Thank you to [Nsit-Flaticon](https://www.flaticon.com/free-icons/lemur) for the lemur icon
-
 ## License
 
 Have a look at [License file](https://github.com/Emilien-Foissotte/carburoam/blob/main/LICENSE.txt)
