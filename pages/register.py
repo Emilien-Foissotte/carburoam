@@ -19,9 +19,6 @@ authenticator, config = init_authenticator()
 
 st.title("Register to Carburoam 🚘💸🛢️")
 
-st.write(st.session_state["authentication_status"])
-
-
 if st.session_state["authentication_status"]:
     name = st.session_state["name"]
     # ask to logout before registering
