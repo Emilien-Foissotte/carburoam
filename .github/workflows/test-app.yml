@@ -3,7 +3,7 @@ name: Streamlit app
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "Emilien-Foissotte-patch-1"]
   pull_request:
     branches: ["main"]
 
