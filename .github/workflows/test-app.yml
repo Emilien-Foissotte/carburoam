@@ -3,7 +3,7 @@ name: Unit Testing Streamlit app
 
 on:
   push:
-    branches: ["main", "feat/ci-cd-unit-testing"]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
 
