@@ -26,7 +26,7 @@ deploy:  ## Deploy the app locally
 	uv run streamlit run home.py
 
 test:  ## Launch tests
-	uv run pytest
+	uv run pytest -v
 
 
 # Example: make version=0.0.1 edit-version

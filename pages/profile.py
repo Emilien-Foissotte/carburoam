@@ -48,13 +48,21 @@ if st.session_state["authentication_status"]:
             logger.info("User modified preferred gas types")
             for key, value in checkboxs_dict.items():
                 if value and key not in id_gastypes_followed:
-                    gas_type = db_session.query(GasType).filter_by(id=key).first()
+                    gas_type = (
+                        db_session.query(GasType).filter_by(id=key).first()
+                    )
                     user.gastypes.append(gas_type)
-                    st.toast(f"Preferred gas type {gas_type.name} added", icon="🛢️")
+                    st.toast(
+                        f"Preferred gas type {gas_type.name} added", icon="🛢️"
+                    )
 
                 elif not value and key in id_gastypes_followed:
-                    gas_type = db_session.query(GasType).filter_by(id=key).first()
-                    st.toast(f"Preferred gas type {gas_type.name} removed", icon="🛢️")
+                    gas_type = (
+                        db_session.query(GasType).filter_by(id=key).first()
+                    )
+                    st.toast(
+                        f"Preferred gas type {gas_type.name} removed", icon="🛢️"
+                    )
                     user.gastypes.remove(gas_type)
             try:
                 db_session.commit()
@@ -86,7 +94,9 @@ if st.session_state["authentication_status"]:
             if submitted:
                 logger.info("User deleted account")
                 try:
-                    del config["credentials"]["usernames"][st.session_state["username"]]
+                    del config["credentials"]["usernames"][
+                        st.session_state["username"]
+                    ]
                     st.success("Account deleted successfully")
                     dump_config(config)
                     authenticator.logout(location="unrendered")

@@ -54,7 +54,10 @@ if st.session_state["authentication_status"]:
             url,
             headers=headers,
             # start is a date-time string, compute as last month
-            data={"start": last_week - timedelta(days=30), "include_paths": [34133008]},
+            data={
+                "start": last_week - timedelta(days=30),
+                "include_paths": [34133008],
+            },
         )
 
         if r_last_week.status_code == 200:
@@ -65,7 +68,9 @@ if st.session_state["authentication_status"]:
             if r_last_month.status_code == 200:
                 data_count_month = r_last_month.json()
                 with c2:
-                    st.metric("Total views last month", data_count_month["total"])
+                    st.metric(
+                        "Total views last month", data_count_month["total"]
+                    )
         else:
             st.write(r_last_week.status_code)
             st.error("Failed to get the view counts")
@@ -80,7 +85,8 @@ if st.session_state["authentication_status"]:
             # make a pure sql query on this one
             conn = st.connection("gas_db", type="sql")
             df_result = conn.query(
-                "SELECT COUNT(DISTINCT(user_id)) as total FROM custom_stations", ttl=60
+                "SELECT COUNT(DISTINCT(user_id)) as total FROM custom_stations",
+                ttl=60,
             )
 
             count_users_custom_stations = df_result.iloc[0]["total"]
@@ -89,13 +95,16 @@ if st.session_state["authentication_status"]:
         st.subheader("Verification codes")
         c1, c2 = st.columns(2)
         with c1:
-            count_verification_codes = db_session.query(VerificationCode).count()
+            count_verification_codes = db_session.query(
+                VerificationCode
+            ).count()
             st.metric("Total verification codes", count_verification_codes)
         with c2:
             count_expired_codes = (
                 db_session.query(VerificationCode)
                 .filter(
-                    VerificationCode.created_at < datetime.now() - timedelta(minutes=5)
+                    VerificationCode.created_at
+                    < datetime.now() - timedelta(minutes=5)
                 )
                 .count()
             )
@@ -114,7 +123,9 @@ if st.session_state["authentication_status"]:
                 if username_forgot_pw:
                     logger.info("New password sent")
                     st.success("New password sent securely")
-                    st.success(f"New password to sent to user is {random_password}")
+                    st.success(
+                        f"New password to sent to user is {random_password}"
+                    )
                     # Random password to be transferred to user securely
                     body = f"Your new password is {random_password}"
                     send_email(

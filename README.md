@@ -17,8 +17,12 @@
     <img src="https://img.shields.io/github/issues/emilien-foissotte/carburoam/ready for dev" alt="GitHub issues ready for dev">
   </a>
   <a href="https://carburoam.streamlit.app/demo">
-    <img src="https://img.shields.io/badge/etl-automated-blue?logo=python" alt="GitPod badge">
+    <img src="https://img.shields.io/badge/etl-automated-blue?logo=python" alt="ETL demo page">
   </a>
+  <a href="https://github.com/emilien-foissotte/carburoam/actions/workflows/test-app.yml">
+    <img src="https://github.com/emilien-foissotte/carburoam/actions/workflows/test-app.yml/badge.svg" alt="CICD Status">
+  </a>
+
 </p>
 
 Welcome to the [Carburoam](https://carburoam.streamlit.app/about) repository, it fuels
@@ -37,6 +41,7 @@ an Open Source dashboard to help users get cheapest prices at gas stations in ðŸ
 2. [Developer notes](#developer-notes)
    1. [Data flow](#data-flow)
    2. [Environment management](#environment-management)
+   3. [Testing](#testing)
 3. [Vulnerability Disclosure](#vulnerability-disclosure)
    1. [Authorization](#authorization)
    2. [Guidelines](#guidelines)
@@ -78,6 +83,12 @@ To manage local and distant environments, it uses an `.ENV` file, which shall co
 - GMAIL_APP_PASSWORD : app password for streamlit gmail account
 - LOAD_MODE="remote|local" : If remote, need AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 - BUCKET_NAME_STORE: Uri of the bucket where config file is stored, if using remote load mode
+
+### Testing
+
+This repository uses somes github actions defined in [.github/workflows](.github/workflows) folder.
+
+It uses mock to setup a mocking environment and fire some `pytest` tests to ensure app is working properly.
 
 ## Contributing
 
