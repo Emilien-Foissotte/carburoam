@@ -5,7 +5,9 @@ from st_social_media_links import SocialMediaIcons
 
 def make_sidebar(version: str):
     with st.sidebar:
-        st.page_link("pages/about.py", label=f"About Carburoam v{version}", icon="ℹ️")
+        st.page_link(
+            "pages/about.py", label=f"About Carburoam v{version}", icon="ℹ️"
+        )
 
         with open("sidebar.html", "r", encoding="UTF-8") as sidebar_file:
             sidebar_html = sidebar_file.read().replace("{VERSION}", version)

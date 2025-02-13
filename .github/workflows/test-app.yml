@@ -21,3 +21,14 @@ jobs:
       - uses: streamlit/streamlit-app-action@v0.0.3
         with:
           app-path: home.py
+          ruff: true
+          skip-smoke: true
+          # Add pytest-args to output junit xml
+          pytest-args: -v --junit-xml=test-results.xml
+
+      - if: always()
+        uses: pmeier/pytest-results-action@v0.6.0
+        with:
+          path: test-results.xml
+          summary: true
+          display-options: fEX

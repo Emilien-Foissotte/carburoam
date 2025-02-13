@@ -24,7 +24,10 @@ def on_click_center_map(station_id):
     # grab the station from the id
     station = db_session.query(Station).filter_by(id=station_id).first()
     # update the center of the map
-    st.session_state["center"] = [station.latitude / 100000, station.longitude / 100000]
+    st.session_state["center"] = [
+        station.latitude / 100000,
+        station.longitude / 100000,
+    ]
     st.session_state["map_zoom"] = 16
 
 
@@ -86,7 +89,9 @@ evolutions_gas = {
     "remove": gastypes_followed_set - options_set,
 }
 for gastype_name_selected in evolutions_gas["remove"]:
-    gas_type = db_session.query(GasType).filter_by(name=gastype_name_selected).first()
+    gas_type = (
+        db_session.query(GasType).filter_by(name=gastype_name_selected).first()
+    )
     st.session_state["gastypes_followed_demo"].remove(gastype_name_selected)
     st.toast(f"Gas type {gastype_name_selected} removed", icon="🛢️")
 for gastype_name_selected in evolutions_gas["add"]:
@@ -106,7 +111,10 @@ ZOOM_START = 6
 if not st.session_state["geolocated_demo"]:
     st.write("Click here to automatically be geolocated 👇")
     location = streamlit_geolocation()
-    if location.get("latitude") is not None and location.get("longitude") is not None:
+    if (
+        location.get("latitude") is not None
+        and location.get("longitude") is not None
+    ):
         CENTER_START = [location["latitude"], location["longitude"]]
         ZOOM_START = 16
         if not st.session_state["geolocated_demo"]:
@@ -220,7 +228,9 @@ if st_data is not None:
             with st.form(key="add_station"):
                 # write information about the station
                 st.write("Add this station to demo stations 👇")
-                station = db_session.query(Station).filter_by(id=station_id).first()
+                station = (
+                    db_session.query(Station).filter_by(id=station_id).first()
+                )
                 st.write(f"Address: {station.address.upper()}")
                 st.write(f"Town: {station.town.upper()}")
                 st.write(f"Zip code: {station.zip_code}")
@@ -233,7 +243,9 @@ if st_data is not None:
                         "id": station_id,
                         "custom_name": custom_name,
                     }
-                    st.session_state["stations_followed_demo"].append(custom_station)
+                    st.session_state["stations_followed_demo"].append(
+                        custom_station
+                    )
                     st.toast(f"Station {custom_name} added", icon="🎉")
                     # flush the session state for stations
                     st.session_state["stations_demo"] = {}
@@ -241,11 +253,15 @@ if st_data is not None:
             with st.form(key="remove_station"):
                 # write information about the station
                 st.write("Remove this station from demo stations 👇")
-                station = db_session.query(Station).filter_by(id=station_id).first()
+                station = (
+                    db_session.query(Station).filter_by(id=station_id).first()
+                )
                 st.write(f"Address: {station.address.upper()}")
                 st.write(f"Town: {station.town.upper()}")
                 st.write(f"Zip code: {station.zip_code}")
-                for custom_station in st.session_state["stations_followed_demo"]:
+                for custom_station in st.session_state[
+                    "stations_followed_demo"
+                ]:
                     if custom_station.get("id") == station_id:
                         custom_name = custom_station.get("custom_name")
                         break
@@ -256,7 +272,9 @@ if st_data is not None:
                         "id": station_id,
                         "custom_name": custom_name,
                     }
-                    st.session_state["stations_followed_demo"].remove(custom_station)
+                    st.session_state["stations_followed_demo"].remove(
+                        custom_station
+                    )
                     st.toast(f"Station {custom_name} removed", icon="🗑️")
                     # flush the session state for stations
                     st.session_state["stations_demo"] = {}

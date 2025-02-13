@@ -27,7 +27,9 @@ def on_click_delete_custom_station(custom_station_id):
 
 
 def render_stations(user_id):
-    custom_stations = db_session.query(CustomStation).filter_by(user_id=user.id).all()
+    custom_stations = (
+        db_session.query(CustomStation).filter_by(user_id=user.id).all()
+    )
     col1, col2, col3 = st.columns(3)
     with col1:
         st.write("Name (Click to center map 🎯)")
@@ -69,7 +71,10 @@ def on_click_center_map(station_id):
     # grab the station from the id
     station = db_session.query(Station).filter_by(id=station_id).first()
     # update the center of the map
-    st.session_state["center"] = [station.latitude / 100000, station.longitude / 100000]
+    st.session_state["center"] = [
+        station.latitude / 100000,
+        station.longitude / 100000,
+    ]
     st.session_state["map_zoom"] = 16
 
 
@@ -111,7 +116,9 @@ if st.session_state["authentication_status"]:
         if custom_station is not None:
             with st.form(key="edit_station"):
                 st.write("Edit this station 👇")
-                station = db_session.query(Station).filter_by(id=station_id).first()
+                station = (
+                    db_session.query(Station).filter_by(id=station_id).first()
+                )
                 st.write(f"Address: {station.address.upper()}")
                 st.write(f"Town: {station.town.upper()}")
                 st.write(f"Zip code: {station.zip_code}")
@@ -166,7 +173,9 @@ if st.session_state["authentication_status"]:
     # map of stations
     map_center = st.session_state["center"]
     map_zoom = st.session_state["map_zoom"]
-    st.info("Zoom in to see the markers and click to add a new station👇", icon="ℹ️")
+    st.info(
+        "Zoom in to see the markers and click to add a new station👇", icon="ℹ️"
+    )
     m = folium.Map(location=CENTER_START, zoom_start=map_zoom)
     fg = folium.FeatureGroup(name="Stations markers")
     for key, station in st.session_state["stations"].items():
@@ -210,7 +219,8 @@ if st.session_state["authentication_status"]:
                 st_data["center"]["lng"],
             ]
         if (
-            st_data.get("bounds", {}).get("_southWest", {}).get("lat") is not None
+            st_data.get("bounds", {}).get("_southWest", {}).get("lat")
+            is not None
             and st_data.get("zoom", 16) > 12
         ):
             stations = bounding_stations(st_data["bounds"])
@@ -244,7 +254,11 @@ if st.session_state["authentication_status"]:
                 with st.form(key="add_station"):
                     # write information about the station
                     st.write("Add this station to your stations 👇")
-                    station = db_session.query(Station).filter_by(id=station_id).first()
+                    station = (
+                        db_session.query(Station)
+                        .filter_by(id=station_id)
+                        .first()
+                    )
                     st.write(f"Address: {station.address.upper()}")
                     st.write(f"Town: {station.town.upper()}")
                     st.write(f"Zip code: {station.zip_code}")

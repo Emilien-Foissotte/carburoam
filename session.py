@@ -59,7 +59,14 @@ def create_gastypes(db_session):
         None
     """
     logger.info("Creating gas types")
-    gas_dict = {"Gazole": 1, "SP95": 2, "SP98": 6, "E85": 3, "GPLc": 4, "E10": 5}
+    gas_dict = {
+        "Gazole": 1,
+        "SP95": 2,
+        "SP98": 6,
+        "E85": 3,
+        "GPLc": 4,
+        "E10": 5,
+    }
 
     for name, xml_id in gas_dict.items():
         if not db_session.query(GasType).filter(GasType.name == name).first():

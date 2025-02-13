@@ -113,8 +113,12 @@ class CustomStation(Base):
 
 class Price(Base):
     __tablename__ = "prices"
-    gastype_id = sa.Column(sa.Integer, sa.ForeignKey("gas_types.id"), primary_key=True)
-    station_id = sa.Column(sa.Integer, sa.ForeignKey("stations.id"), primary_key=True)
+    gastype_id = sa.Column(
+        sa.Integer, sa.ForeignKey("gas_types.id"), primary_key=True
+    )
+    station_id = sa.Column(
+        sa.Integer, sa.ForeignKey("stations.id"), primary_key=True
+    )
     updated_at = sa.Column(sa.DateTime, nullable=False)
     price = sa.Column(sa.Float, nullable=False)
 

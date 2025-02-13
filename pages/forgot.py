@@ -35,7 +35,9 @@ with st.expander("Forgot username"):
                 body=body,
                 recipients=[email_of_forgotten_username],
             )
-            st.success("Username has been sent to your email. Please check your email.")
+            st.success(
+                "Username has been sent to your email. Please check your email."
+            )
         elif not username_of_forgotten_username:
             logger.error("Username not found")
             st.error("Email not found")
@@ -60,7 +62,9 @@ with st.expander("Forgot password"):
                 )
                 if previous_code:
                     logger.info("Previous code exists")
-                    if previous_code.created_at > datetime.now() - timedelta(minutes=5):
+                    if previous_code.created_at > datetime.now() - timedelta(
+                        minutes=5
+                    ):
                         st.warning(
                             "A code has been already sent to your email. Please check your email and spam."
                         )
@@ -77,7 +81,9 @@ with st.expander("Forgot password"):
                     logger.info("No previous code, generating new one")
                     # generate a random password to send by email and add to database
                     random_verification_code = "".join(
-                        random.choices(string.ascii_letters + string.digits, k=6)
+                        random.choices(
+                            string.ascii_letters + string.digits, k=6
+                        )
                     ).replace(" ", "")
                     new_verification_code = VerificationCode(
                         user_id=user.id,
@@ -91,7 +97,9 @@ with st.expander("Forgot password"):
                         db_session.rollback()
                         st.error("Code already exists")
                     # send the email
-                    body = f"Your verification code is {random_verification_code}"
+                    body = (
+                        f"Your verification code is {random_verification_code}"
+                    )
                     send_email(
                         subject="Your verification code",
                         body=body,
@@ -117,7 +125,9 @@ with st.expander("Forgot password"):
             )
             if verification_code:
                 logger.info("Code found")
-                if verification_code.created_at > datetime.now() - timedelta(minutes=5):
+                if verification_code.created_at > datetime.now() - timedelta(
+                    minutes=5
+                ):
                     st.success("Code is valid")
                     logger.info("Code is valid")
                     # get the user
@@ -129,17 +139,21 @@ with st.expander("Forgot password"):
                     # reset the password
                     st.success(user.username)
                     new_password = "".join(
-                        random.choices(string.ascii_letters + string.digits, k=16)
+                        random.choices(
+                            string.ascii_letters + string.digits, k=16
+                        )
                     ).replace(" ", "")
-                    config["credentials"]["usernames"][user.username]["password"] = (
-                        bcrypt.hashpw(
-                            new_password.encode("utf-8"), bcrypt.gensalt()
-                        ).decode("utf-8")
-                    )
+                    config["credentials"]["usernames"][user.username][
+                        "password"
+                    ] = bcrypt.hashpw(
+                        new_password.encode("utf-8"), bcrypt.gensalt()
+                    ).decode("utf-8")
                     # send email
                     body = f"Your new password is {new_password}"
                     send_email(
-                        subject="Your new password", body=body, recipients=[user.email]
+                        subject="Your new password",
+                        body=body,
+                        recipients=[user.email],
                     )
                     dump_config(config)
                     st.success(
