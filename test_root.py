@@ -53,10 +53,10 @@ def test_home_page(mock_load_mode, mock_config_path):
     assert at.title[0].value == "Welcome on Carburoam 🚘💸🛢️ newcomer !"
 
 
-# def test_register_page(mock_load_mode):
-#     at = AppTest.from_file("home.py")
-#     at.secrets["LOAD_MODE"] = "local"
-#     at.switch_page("pages/register.py")
-#     at.run()
-#     assert not at.exception
-#     assert at.title[0].value == "Register to Carburoam 🚘💸🛢️"
+def test_register_page(mock_load_mode):
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/register.py")
+    at.run()
+    assert not at.exception
+    assert at.title[0].value == "Register to Carburoam 🚘💸🛢️"
