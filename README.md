@@ -17,8 +17,12 @@
     <img src="https://img.shields.io/github/issues/emilien-foissotte/carburoam/ready for dev" alt="GitHub issues ready for dev">
   </a>
   <a href="https://carburoam.streamlit.app/demo">
-    <img src="https://img.shields.io/badge/etl-automated-blue?logo=python" alt="GitPod badge">
+    <img src="https://img.shields.io/badge/etl-automated-blue?logo=python" alt="ETL demo page">
   </a>
+  <a href="https://github.com/emilien-foissotte/carburoam/actions/workflows/test-app.yml">
+    <img src="https://github.com/emilien-foissotte/carburoam/actions/workflows/test-app.yml/badge.svg" alt="CICD Status">
+  </a>
+
 </p>
 
 Welcome to the [Carburoam](https://carburoam.streamlit.app/about) repository, it fuels

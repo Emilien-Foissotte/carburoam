@@ -1,5 +1,5 @@
 # .github/workflows/streamlit-app.yml
-name: Streamlit app
+name: Unit Testing Streamlit app
 
 on:
   push:
@@ -25,9 +25,8 @@ jobs:
           skip-smoke: true
           # Add pytest-args to output junit xml
           pytest-args: -v --junit-xml=test-results.xml
-
       - if: always()
-        uses: pmeier/pytest-results-action@v0.6.0
+        uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: test-results.xml
           summary: true

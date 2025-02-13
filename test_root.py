@@ -36,13 +36,44 @@ def test_dummy():
     assert True
 
 
+def test_about_page(mock_load_mode, mock_config_path):
+    """
+    Test the about page of the application.
+    """
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/about.py")
+    at.run()
+    assert not at.exception
+
+
+def test_demo_page(mock_load_mode, mock_config_path):
+    """
+    Test the demo page of the application.
+    """
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/demo.py")
+    at.run()
+    assert not at.exception
+    assert at.title[0].value == "Stations dashboard ⛽"
+
+
+def test_forgot_page(mock_load_mode, mock_config_path):
+    """
+    Test the forgot page of the application.
+    """
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/forgot.py")
+    at.run()
+    assert not at.exception
+    assert at.title[0].value == "Need Help ? 🆘"
+
+
 def test_home_page(mock_load_mode, mock_config_path):
     """
     Test the home page of the application.
-
-    This test loads the home page script, sets the load mode to local,
-    runs the application, and checks for any exceptions. It also verifies
-    that the title of the home page is as expected.
     """
     at = AppTest.from_file("home.py")
     at.secrets["LOAD_MODE"] = "local"
@@ -53,6 +84,14 @@ def test_home_page(mock_load_mode, mock_config_path):
     assert at.title[0].value == "Welcome on Carburoam 🚘💸🛢️ newcomer !"
 
 
+def test_profile_page(mock_load_mode, mock_config_path):
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/profile.py")
+    at.run()
+    assert not at.exception
+
+
 def test_register_page(mock_load_mode, mock_config_path):
     at = AppTest.from_file("home.py")
     at.secrets["LOAD_MODE"] = "local"
@@ -60,3 +99,26 @@ def test_register_page(mock_load_mode, mock_config_path):
     at.run()
     assert not at.exception
     assert at.title[0].value == "Register to Carburoam 🚘💸🛢️"
+
+
+def test_stations_page(mock_load_mode, mock_config_path):
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/stations.py")
+    at.run()
+    assert not at.exception
+
+
+### for more automation, we need Playwright plugins and codegen
+# import re
+# from playwright.sync_api import Playwright, sync_playwright, expect
+#
+#
+#
+#
+# def test_go_to_demo(playwright: Playwright) -> None:
+#     browser = playwright.chromium.launch(headless=False)
+#     context = browser.new_context()
+#     page = context.new_page()
+#     page.goto("http://localhost:8501/")
+#     page.get_by_role("link", name="Demo without registration").click()
