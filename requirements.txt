@@ -8,13 +8,13 @@ attrs==25.1.0
     #   referencing
 bcrypt==4.2.1
     # via streamlit-authenticator
-beautifulsoup4==4.13.1
+beautifulsoup4==4.13.3
     # via st-social-media-links
 blinker==1.9.0
     # via streamlit
-boto3==1.36.12
+boto3==1.36.22
     # via carburoam (pyproject.toml)
-botocore==1.36.12
+botocore==1.36.22
     # via
     #   boto3
     #   s3transfer
@@ -63,9 +63,9 @@ markupsafe==3.0.2
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
-narwhals==1.25.0
+narwhals==1.27.1
     # via altair
-numpy==2.2.2
+numpy==2.2.3
     # via
     #   folium
     #   pandas
@@ -83,7 +83,7 @@ pillow==11.1.0
     #   streamlit
 protobuf==5.29.3
     # via streamlit
-psutil==6.1.1
+psutil==7.0.0
     # via carburoam (pyproject.toml)
 pyarrow==19.0.0
     # via streamlit
@@ -126,7 +126,7 @@ smmap==5.0.2
     # via gitdb
 soupsieve==2.6
     # via beautifulsoup4
-sqlalchemy==2.0.37
+sqlalchemy==2.0.38
     # via
     #   carburoam (pyproject.toml)
     #   sqlalchemy-utils
@@ -134,7 +134,7 @@ sqlalchemy-utils==0.41.2
     # via carburoam (pyproject.toml)
 st-social-media-links==0.1.4
     # via carburoam (pyproject.toml)
-streamlit==1.41.1
+streamlit==1.42.1
     # via
     #   carburoam (pyproject.toml)
     #   extra-streamlit-components
