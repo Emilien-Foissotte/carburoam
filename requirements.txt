@@ -159,6 +159,7 @@ tqdm==4.67.1
 typing-extensions==4.12.2
     # via
     #   altair
+    #   beautifulsoup4
     #   referencing
     #   sqlalchemy
     #   streamlit
