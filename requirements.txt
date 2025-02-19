@@ -40,6 +40,8 @@ gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
     # via streamlit
+greenlet==3.1.1
+    # via sqlalchemy
 idna==3.10
     # via requests
 jinja2==3.1.5
@@ -170,8 +172,8 @@ urllib3==2.3.0
     #   botocore
     #   requests
 watchdog==6.0.0
-    # via carburoam (pyproject.toml)
+    # via
+    #   carburoam (pyproject.toml)
+    #   streamlit
 xyzservices==2025.1.0
     # via folium
- 
- 
