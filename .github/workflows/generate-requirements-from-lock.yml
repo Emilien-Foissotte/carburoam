@@ -1,0 +1,40 @@
+name: Compile and Commit Requirements
+
+on:
+  push:
+    branches:
+      - main
+      - feat/ci-generate-reqs-dynamically
+    paths:
+      - uv.lock
+
+jobs:
+  compile-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install uv
+      run: pip install uv
+
+    - name: Compile requirements
+      run: uv pip compile pyproject.toml -o requirements.txt
+
+    - name: Commit changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add requirements.txt
+        git commit -m 'Update requirements.txt'
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
