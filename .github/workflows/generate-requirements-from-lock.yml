@@ -15,26 +15,20 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-        persist-credentials: false
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.12'
 
     - name: Install uv
       run: pip install uv
 
-    - name: Compile requirements
-      run: uv pip compile pyproject.toml -o requirements.txt
-
-    - name: Commit changes
+    - name: Compile and add requirements
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        uv pip compile pyproject.toml -o requirements.txt
         git add requirements.txt
         git commit -m 'Update requirements.txt'
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7
