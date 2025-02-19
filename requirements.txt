@@ -174,3 +174,4 @@ watchdog==6.0.0
 xyzservices==2025.1.0
     # via folium
  
+ 
