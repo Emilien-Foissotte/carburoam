@@ -172,3 +172,4 @@ watchdog==6.0.0
     # via carburoam (pyproject.toml)
 xyzservices==2025.1.0
     # via folium
+ 
