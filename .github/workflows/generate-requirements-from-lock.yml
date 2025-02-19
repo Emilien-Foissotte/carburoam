@@ -25,10 +25,7 @@ jobs:
       run: pip install uv
 
     - name: Compile and add requirements
-      run: |
-        uv pip compile pyproject.toml -o requirements.txt
-        git add requirements.txt
-        git commit -m 'Update requirements.txt'
+      run: uv pip compile pyproject.toml -o requirements.txt
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v7
