@@ -1,12 +1,16 @@
 name: Compile and Commit Requirements
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   push:
     branches:
       - main
       - feat/ci-generate-reqs-dynamically
     paths:
-      - uv.lock
+      - requirements.txt
 
 jobs:
   compile-and-commit:
@@ -25,7 +29,11 @@ jobs:
       run: pip install uv
 
     - name: Compile and add requirements
-      run: uv pip compile pyproject.toml -o requirements.txt
+      run: |
+        uv lock --upgrade
+        uv pip compile pyproject.toml -o requirements.txt
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v7
+      with:
+        branch: update-lock-after-requirements
