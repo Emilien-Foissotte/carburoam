@@ -28,10 +28,14 @@ captcha==0.7.1
     # via streamlit-authenticator
 certifi==2025.1.31
     # via requests
+cffi==1.17.1
+    # via cryptography
 charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via streamlit
+cryptography==44.0.2
+    # via streamlit-authenticator
 extra-streamlit-components==0.1.71
     # via streamlit-authenticator
 folium==0.19.5
@@ -89,6 +93,8 @@ psutil==7.0.0
     # via carburoam (pyproject.toml)
 pyarrow==19.0.1
     # via streamlit
+pycparser==2.22
+    # via cffi
 pydeck==0.9.1
     # via streamlit
 pygments==2.19.1
