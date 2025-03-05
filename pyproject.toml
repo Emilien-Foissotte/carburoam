@@ -18,7 +18,7 @@ dependencies = [
     "sqlalchemy-utils>=0.41.2",
     "st-social-media-links>=0.1.4",
     "streamlit>=1.41.1",
-    "streamlit-authenticator>=0.4.1",
+    "streamlit-authenticator==0.4.1",
     "streamlit-folium>=0.24.0",
     "streamlit-geolocation>=0.0.10",
     "tqdm>=4.67.1",
