@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml -o requirements.txt
 altair==5.5.0
     # via streamlit
-attrs==25.1.0
+attrs==25.3.0
     # via
     #   jsonschema
     #   referencing
@@ -12,9 +12,9 @@ beautifulsoup4==4.13.3
     # via st-social-media-links
 blinker==1.9.0
     # via streamlit
-boto3==1.37.5
+boto3==1.37.14
     # via carburoam (pyproject.toml)
-botocore==1.37.5
+botocore==1.37.14
     # via
     #   boto3
     #   s3transfer
@@ -42,7 +42,7 @@ gitpython==3.1.44
     # via streamlit
 idna==3.10
     # via requests
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   altair
     #   branca
@@ -63,9 +63,9 @@ markupsafe==3.0.2
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
-narwhals==1.29.0
+narwhals==1.31.0
     # via altair
-numpy==2.2.3
+numpy==2.2.4
     # via
     #   folium
     #   pandas
@@ -81,7 +81,7 @@ pillow==11.1.0
     # via
     #   captcha
     #   streamlit
-protobuf==5.29.3
+protobuf==6.30.1
     # via streamlit
 psutil==7.0.0
     # via carburoam (pyproject.toml)
@@ -118,7 +118,7 @@ rpds-py==0.23.1
     # via
     #   jsonschema
     #   referencing
-s3transfer==0.11.3
+s3transfer==0.11.4
     # via boto3
 six==1.17.0
     # via python-dateutil
@@ -126,7 +126,7 @@ smmap==5.0.2
     # via gitdb
 soupsieve==2.6
     # via beautifulsoup4
-sqlalchemy==2.0.38
+sqlalchemy==2.0.39
     # via
     #   carburoam (pyproject.toml)
     #   sqlalchemy-utils
@@ -134,7 +134,7 @@ sqlalchemy-utils==0.41.2
     # via carburoam (pyproject.toml)
 st-social-media-links==0.1.4
     # via carburoam (pyproject.toml)
-streamlit==1.42.2
+streamlit==1.43.2
     # via
     #   carburoam (pyproject.toml)
     #   extra-streamlit-components
@@ -142,7 +142,7 @@ streamlit==1.42.2
     #   streamlit-authenticator
     #   streamlit-folium
     #   streamlit-geolocation
-streamlit-authenticator==0.4.1
+streamlit-authenticator==0.4.2
     # via carburoam (pyproject.toml)
 streamlit-folium==0.24.0
     # via carburoam (pyproject.toml)
