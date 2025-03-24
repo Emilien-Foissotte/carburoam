@@ -1,6 +1,6 @@
 [project]
 name = "carburoam"
-version = "0.5.0"
+version = "0.6.0"
 description = " The first open-source live Gas Station price dashboard."
 license = "BSD-3-Clause"
 readme = "README.md"
@@ -11,6 +11,7 @@ authors = [
 ]
 dependencies = [
     "boto3>=1.36.9",
+    "dunamai>=1.23.1",
     "psutil>=6.1.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
@@ -21,9 +22,49 @@ dependencies = [
     "streamlit-authenticator==0.4.1",
     "streamlit-folium>=0.24.0",
     "streamlit-geolocation>=0.0.10",
+    "towncrier>=24.8.0",
     "tqdm>=4.67.1",
     "watchdog>=6.0.0",
 ]
+
+[tool.towncrier]
+package = "carburoam"
+package_dir = "src"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+title_format = "## [{version}](https://github.com/emilien-foissotte/carburoam/tree/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/emilien-foisotte/carburoam/issues/{issue})"
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
 
 [dependency-groups]
 dev = [

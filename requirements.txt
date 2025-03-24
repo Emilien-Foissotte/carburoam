@@ -31,7 +31,11 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
     # via requests
 click==8.1.8
-    # via streamlit
+    # via
+    #   streamlit
+    #   towncrier
+dunamai==1.23.1
+    # via carburoam (pyproject.toml)
 extra-streamlit-components==0.1.71
     # via streamlit-authenticator
 folium==0.19.5
@@ -49,6 +53,7 @@ jinja2==3.1.5
     #   folium
     #   pydeck
     #   streamlit-folium
+    #   towncrier
 jmespath==1.0.1
     # via
     #   boto3
@@ -74,6 +79,7 @@ numpy==2.2.3
 packaging==24.2
     # via
     #   altair
+    #   dunamai
     #   streamlit
 pandas==2.2.3
     # via streamlit
@@ -154,6 +160,8 @@ toml==0.10.2
     # via streamlit
 tornado==6.4.2
     # via streamlit
+towncrier==24.8.0
+    # via carburoam (pyproject.toml)
 tqdm==4.67.1
     # via carburoam (pyproject.toml)
 typing-extensions==4.12.2
