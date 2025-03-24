@@ -1,7 +1,8 @@
 const puppeteer = require("puppeteer");
 const TARGET_URL = "https://carburoam.streamlit.app/";
 const WAKE_UP_BUTTON_TEXT = "app back up";
-const PAGE_LOAD_GRACE_PERIOD_MS = 8000;
+const PAGE_LOAD_GRACE_PERIOD_MS = 10000;
+const TIMEOUT_MS = 30000;
 
 console.log(process.version);
 
@@ -30,13 +31,37 @@ console.log(process.version);
     if (button) {
       console.log("App hibernating. Attempting to wake up!");
       await button.click();
+    } else if (
+      await target.evaluate(() => document.body.innerText.includes("Carburoam"))
+    ) {
+      console.log("App is already up and running with 'Carburoam' displayed!");
+    } else {
+      console.log("App is already up and running!");
     }
   };
 
-  await checkForHibernation(page);
-  const frames = await page.frames();
-  for (const frame of frames) {
-    await checkForHibernation(frame);
+  let foundCarburoam = false;
+  const startTime = Date.now();
+  while (!foundCarburoam) {
+    const frames = await page.frames();
+    for (const frame of frames) {
+      if (
+        await frame.evaluate(() =>
+          document.body.innerText.includes("Carburoam"),
+        )
+      ) {
+        foundCarburoam = true;
+        console.log("Success: Found 'Carburoam' in the page!");
+        break;
+      }
+    }
+
+    if (Date.now() - startTime > TIMEOUT_MS) {
+      console.error("Error: Timeout exceeded. No frame contains 'Carburoam'.");
+      process.exit(1);
+    }
+
+    await page.waitForTimeout(1000); // Wait 1 second before checking again
   }
 
   await browser.close();
