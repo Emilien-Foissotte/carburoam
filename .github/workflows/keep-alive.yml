@@ -2,7 +2,7 @@
 name: Keep alive streamlit
 on:
   schedule:
-    - cron: '0 */48 * * *'
+    - cron: '0 */12 * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
