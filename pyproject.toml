@@ -1,6 +1,6 @@
 [project]
 name = "carburoam"
-version = "0.6.0"
+version = "0.6.1"
 description = " The first open-source live Gas Station price dashboard."
 license = "BSD-3-Clause"
 readme = "README.md"

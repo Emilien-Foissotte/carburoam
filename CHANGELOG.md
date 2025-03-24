@@ -8,6 +8,13 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.6.1](https://github.com/emilien-foissotte/carburoam/tree/0.6.1) - 2025-03-25
+
+### Added
+
+- Minor bump to test config
+
+
 ## [0.6.0](https://github.com/emilien-foissotte/carburoam/tree/0.6.0) - 2025-03-25
 
 ### Added
