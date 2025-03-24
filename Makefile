@@ -27,10 +27,3 @@ deploy:  ## Deploy the app locally
 
 test:  ## Launch tests
 	uv run pytest -v
-
-
-# Example: make version=0.0.1 edit-version
-version?=0.0.1
-edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml.
-	sed -i '' "s/^VERSION = \".*\"/VERSION = \"$(version)\"/" utils.py
-	sed -i '' "s/^version = \".*\"/version = \"$(version)\"/" pyproject.toml

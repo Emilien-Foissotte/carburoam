@@ -170,8 +170,7 @@ wheels = [
 
 [[package]]
 name = "carburoam"
-version = "0.5.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "boto3" },
     { name = "psutil" },
@@ -184,6 +183,7 @@ dependencies = [
     { name = "streamlit-authenticator" },
     { name = "streamlit-folium" },
     { name = "streamlit-geolocation" },
+    { name = "towncrier" },
     { name = "tqdm" },
     { name = "watchdog" },
 ]
@@ -210,6 +210,7 @@ requires-dist = [
     { name = "streamlit-authenticator", specifier = "==0.4.1" },
     { name = "streamlit-folium", specifier = ">=0.24.0" },
     { name = "streamlit-geolocation", specifier = ">=0.0.10" },
+    { name = "towncrier", specifier = ">=24.8.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "watchdog", specifier = ">=6.0.0" },
 ]
@@ -1379,6 +1380,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/2b/ae/c1b22d4524b0e10da2f29a176fb2890386f7bd1f63aacf186444873a88a0/tornado-6.4.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:932d195ca9015956fa502c6b56af9eb06106140d844a335590c1ec7f5277d10c", size = 437261 },
     { url = "https://files.pythonhosted.org/packages/b5/25/36dbd49ab6d179bcfc4c6c093a51795a4f3bed380543a8242ac3517a1751/tornado-6.4.2-cp38-abi3-win32.whl", hash = "sha256:2876cef82e6c5978fde1e0d5b1f919d756968d5b4282418f3146b79b58556482", size = 438463 },
     { url = "https://files.pythonhosted.org/packages/61/cc/58b1adeb1bb46228442081e746fcdbc4540905c87e8add7c277540934edb/tornado-6.4.2-cp38-abi3-win_amd64.whl", hash = "sha256:908b71bf3ff37d81073356a5fadcc660eb10c1476ee6e2725588626ce7e5ca38", size = 438907 },
+]
+
+[[package]]
+name = "towncrier"
+version = "24.8.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "jinja2" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/69/d7/a5183f788cf4fabf03f7c767ae0b968249b0c737eb64b4d87a07ae01fea7/towncrier-24.8.0.tar.gz", hash = "sha256:013423ee7eed102b2f393c287d22d95f66f1a3ea10a4baa82d298001a7f18af3", size = 61635 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/1b/2f7b88506e22d9798c139261af4946865c0787cfa345514ca3c70173a9cc/towncrier-24.8.0-py3-none-any.whl", hash = "sha256:9343209592b839209cdf28c339ba45792fbfe9775b5f9c177462fd693e127d8d", size = 56981 },
 ]
 
 [[package]]
