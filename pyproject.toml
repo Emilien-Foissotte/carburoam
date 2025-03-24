@@ -1,6 +1,6 @@
 [project]
 name = "carburoam"
-dynamic = ["version"]
+version = "0.6.0"
 description = " The first open-source live Gas Station price dashboard."
 license = "BSD-3-Clause"
 readme = "README.md"
@@ -11,6 +11,7 @@ authors = [
 ]
 dependencies = [
     "boto3>=1.36.9",
+    "dunamai>=1.23.1",
     "psutil>=6.1.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
@@ -25,12 +26,6 @@ dependencies = [
     "tqdm>=4.67.1",
     "watchdog>=6.0.0",
 ]
-[build-system]
-requires = ["hatchling", "uv-dynamic-versioning"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-source = "uv-dynamic-versioning"
 
 [tool.towncrier]
 package = "carburoam"

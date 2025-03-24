@@ -27,3 +27,11 @@ deploy:  ## Deploy the app locally
 
 test:  ## Launch tests
 	uv run pytest -v
+
+# Example: make version=0.0.1 edit-version
+version?=0.0.1
+edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml.
+	sed -i '' "s/^version = \".*\"/version = \"$(version)\"/" pyproject.toml
+	sed -i '' "s/^__version__ = \".*\"/__version__ = \"$(version)\"/" src/carburoam/__init__.py
+	git tag -a $(version) -m "Release $(version)"
+	uvx towncrier build

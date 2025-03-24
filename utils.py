@@ -1,6 +1,5 @@
 import argparse
 import hashlib
-import importlib.metadata
 import os
 import signal
 import smtplib
@@ -23,6 +22,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 from dotenv import load_dotenv
+from dunamai import Version
 from requests.exceptions import HTTPError
 from tqdm import tqdm
 from yaml.loader import SafeLoader
@@ -30,12 +30,7 @@ from yaml.loader import SafeLoader
 from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-try:
-    __version__ = importlib.metadata.version("carburoam")
-except importlib.metadata.PackageNotFoundError:
-    __version__ = "0.0.0"
-# VERSION = "0.5.0"
-VERSION = __version__
+VERSION = Version.from_git().serialize()
 
 #################
 ##AUTHENTICATOR##
