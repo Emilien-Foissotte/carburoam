@@ -22,7 +22,6 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 from dotenv import load_dotenv
-from dunamai import Version
 from requests.exceptions import HTTPError
 from tqdm import tqdm
 from yaml.loader import SafeLoader
@@ -30,7 +29,7 @@ from yaml.loader import SafeLoader
 from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-VERSION = Version.from_git().serialize()
+VERSION = "0.6.1"
 
 #################
 ##AUTHENTICATOR##
