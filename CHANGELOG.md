@@ -10,9 +10,9 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 ## [0.6.1](https://github.com/emilien-foissotte/carburoam/tree/0.6.1) - 2025-03-25
 
-### Misc
+### Fixed
 
-- Minor bump to test config
+- Removed dunamai dynamic versioning from Git
 
 ## [0.6.0](https://github.com/emilien-foissotte/carburoam/tree/0.6.0) - 2025-03-25
 
