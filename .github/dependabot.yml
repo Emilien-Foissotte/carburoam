@@ -4,10 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "tuesday"
+      day: "wednesday"
     reviewers:
       - Emilien-Foissotte
     groups:
       python-packages:
         patterns:
           - "*"
+    ignore:
+     - dependency-name: "streamlit-authenticator"
