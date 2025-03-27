@@ -55,14 +55,25 @@ def load_users_to_db(config):
         # if user not exists
         gas_list = []
         for gas_type in db_session.query(GasType).all():
-            gas_list.append(gas_type)
+            # add only SP95 and Gazole
+            if gas_type.name in ["SP95", "E10", "Gazole"]:
+                gas_list.append(gas_type)
         if not db_session.query(User).filter(User.username == username).first():
-            # add all gas types to the user
+            name = config["credentials"]["usernames"][username].get("name")
+            if name is None:
+                first_name = config["credentials"]["usernames"][username].get(
+                    "first_name"
+                )
+                last_name = config["credentials"]["usernames"][username].get(
+                    "last_name"
+                )
+                if first_name is not None and last_name is not None:
+                    name = f"{first_name} {last_name}"
 
             user = User(
                 username=username,
                 email=config["credentials"]["usernames"][username]["email"],
-                name=config["credentials"]["usernames"][username]["name"],
+                name=name,
                 gastypes=[gas for gas in gas_list],
             )
             db_session.add(user)
