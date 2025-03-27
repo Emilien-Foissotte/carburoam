@@ -8,6 +8,12 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.6.2](https://github.com/emilien-foissotte/carburoam/tree/0.6.2) - 2025-03-27
+
+### Fixed
+
+- Bug when name was not dumped in database at each user creation ([#35](https://github.com/emilien-foisotte/carburoam/issues/35))
+
 ## [0.6.1](https://github.com/emilien-foissotte/carburoam/tree/0.6.1) - 2025-03-25
 
 ### Fixed
