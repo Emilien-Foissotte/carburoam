@@ -91,11 +91,21 @@ def load_users_to_db(config):
                 user.email = config["credentials"]["usernames"][username][
                     "email"
                 ]
-            name_changed = user.name = config["credentials"]["usernames"][
-                username
-            ]["name"]
+            current_name = config["credentials"]["usernames"][username].get(
+                "name"
+            )
+            if current_name is None:
+                first_name = config["credentials"]["usernames"][username].get(
+                    "first_name"
+                )
+                last_name = config["credentials"]["usernames"][username].get(
+                    "last_name"
+                )
+                if first_name is not None and last_name is not None:
+                    current_name = f"{first_name} {last_name}"
+            name_changed = user.name == current_name
             if name_changed:
-                user.name = config["credentials"]["usernames"][username]["name"]
+                user.name = current_name
             if email_changed or name_changed:
                 db_session.add(user)
     # delete users that are not in the config file
