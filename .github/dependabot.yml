@@ -11,5 +11,3 @@ updates:
       python-packages:
         patterns:
           - "*"
-    ignore:
-     - dependency-name: "streamlit-authenticator"
