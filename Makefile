@@ -28,6 +28,9 @@ deploy:  ## Deploy the app locally
 test:  ## Launch tests
 	uv run pytest -v
 
+test-offline:  ## Launch tests offline fashion
+	uv run pytest -v -m 'not online'
+
 # Example: make version=0.0.1 edit-version
 version?=0.0.1
 edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml.

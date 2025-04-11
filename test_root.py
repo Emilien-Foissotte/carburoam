@@ -1,6 +1,8 @@
+from importlib.metadata import version
 from pathlib import Path
 
 import pytest
+import requests
 from streamlit.testing.v1 import AppTest
 
 
@@ -32,11 +34,37 @@ preauthorized:
     monkeypatch.setattr("utils.CONFIG_PATH", Path(mock_config))
 
 
+@pytest.fixture
+def mock_config_path_dynamically(monkeypatch, tmpdir):
+    mock_config = tmpdir.join("config.yaml")
+    version_stauth = version("streamlit_authenticator")
+    # request github repo demo config
+    response = requests.get(
+        f"https://raw.githubusercontent.com/mkhorasani/Streamlit-Authenticator/refs/tags/{version_stauth}/config.yaml"
+    )
+
+    # dump result to config
+    mock_config.write(response.raw)
+    monkeypatch.setattr("utils.CONFIG_PATH", Path(mock_config))
+
+
 def test_dummy():
     assert True
 
 
 def test_about_page(mock_load_mode, mock_config_path):
+    """
+    Test the about page of the application.
+    """
+    at = AppTest.from_file("home.py")
+    at.secrets["LOAD_MODE"] = "local"
+    at.switch_page("pages/about.py")
+    at.run()
+    assert not at.exception
+
+
+@pytest.mark.online
+def test_about_page_dynamic(mock_load_mode, mock_config_path_dynamically):
     """
     Test the about page of the application.
     """
