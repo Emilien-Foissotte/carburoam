@@ -16,12 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+        id: python
       - name: Install uv package manager
         run: pip install uv
       - name: Install dependencies from lock file
-        run: uv sync --system
+        run: |
+          export VIRTUAL_ENV=${{ steps.python.outputs.python-path }}
+          uv sync
       - uses: streamlit/streamlit-app-action@v0.0.3
         with:
           app-path: home.py
