@@ -8,6 +8,13 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.7.1](https://github.com/emilien-foissotte/carburoam/tree/0.7.1) - 2025-04-13
+
+### Removed
+
+- Use native support of uv.lock file in dependabot and streamlit cloud ([#55](https://github.com/emilien-foisotte/carburoam/issues/55))
+
+
 ## [0.7.0](https://github.com/emilien-foissotte/carburoam/tree/0.7.0) - 2025-04-13
 
 ### Added
