@@ -8,6 +8,13 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.7.0](https://github.com/emilien-foissotte/carburoam/tree/0.7.0) - 2025-04-13
+
+### Added
+
+- Make streamlit authenticator testing dynamic, using example config file from package version. ([#56](https://github.com/emilien-foisotte/carburoam/issues/56))
+
+
 ## [0.6.3](https://github.com/emilien-foissotte/carburoam/tree/0.6.3) - 2025-04-08
 
 ### Fixed
