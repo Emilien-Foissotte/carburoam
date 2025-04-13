@@ -21,7 +21,7 @@ jobs:
         run: pip install uv
       - name: Install dependencies from lock file
         run: |
-          export UV_PROJECT_ENVIRONMENT=${{ steps.python.outputs.python-path }}
+          export UV_PROJECT_ENVIRONMENT=$Python3_ROOT_DIR
           uv sync
       - uses: streamlit/streamlit-app-action@v0.0.3
         with:
