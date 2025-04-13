@@ -3,9 +3,6 @@
 help:  ## Show this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-generate-requirements:  ## generate requirements.txt from pyproject.toml with uv
-	uv pip compile pyproject.toml -o requirements.txt
-
 dump-stations:  ## Fetch stations from api and dump them in db
 	echo "fetchstations"
 	uv run python utils.py --action dump_stations
