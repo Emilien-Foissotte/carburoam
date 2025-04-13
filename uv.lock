@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "carburoam"
-version = "0.6.2"
+version = "0.6.3"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
@@ -196,6 +196,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-playwright" },
+    { name = "requests" },
 ]
 
 [package.metadata]
@@ -223,6 +224,7 @@ dev = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "pytest-playwright", specifier = ">=0.7.0" },
+    { name = "requests", specifier = ">=2.32.3" },
 ]
 
 [[package]]

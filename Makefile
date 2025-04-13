@@ -1,4 +1,4 @@
-.PHONY: help generate-requirements dump-stations create-db create-gastypes deploy test
+.PHONY: help generate-requirements dump-stations create-db create-gastypes deploy test test-offline
 
 help:  ## Show this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -27,6 +27,9 @@ deploy:  ## Deploy the app locally
 
 test:  ## Launch tests
 	uv run pytest -v
+
+test-offline:  ## Launch tests offline fashion
+	uv run pytest -v -m 'not online'
 
 # Example: make version=0.0.1 edit-version
 version?=0.0.1

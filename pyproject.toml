@@ -26,6 +26,11 @@ dependencies = [
     "watchdog>=6.0.0",
 ]
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as online need (deselect with '-m \"not online\"')",
+]
+
 [tool.towncrier]
 package = "carburoam"
 package_dir = "src"
@@ -72,6 +77,7 @@ dev = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "pytest-playwright>=0.7.0",
+    "requests>=2.32.3",
 ]
 
 [tool.ruff]
