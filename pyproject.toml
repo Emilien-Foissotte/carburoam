@@ -11,6 +11,7 @@ authors = [
 ]
 dependencies = [
     "boto3>=1.36.9",
+    "discord-webhook>=1.4.1",
     "psutil>=6.1.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",

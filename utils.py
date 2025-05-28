@@ -21,6 +21,7 @@ import sqlalchemy
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
+from discord_webhook import DiscordWebhook
 from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from tqdm import tqdm
@@ -46,6 +47,7 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
 BUCKET_NAME_STORE = os.environ.get("BUCKET_NAME_STORE")
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
 
 @st.cache_data
@@ -118,6 +120,23 @@ def load_users_to_db(config):
         print(e)
         db_session.rollback()
         st.error("Username or email already exists")
+
+
+def send_discord_notification(topic, message):
+    """
+    This function sends a message to a Discord channel using a webhook.
+    Args:
+        topic (str): The topic of the message, used for logging.
+        message (str): The message to send to the Discord channel.
+    """
+    if DISCORD_WEBHOOK_URL:
+        full_message = f"**{topic}**\n{message}"
+        webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL, content=full_message)
+        response = webhook.execute()
+        if response.status_code != 204:
+            print(f"Failed to send Discord notification: {response.text}")
+    else:
+        print("Discord webhook URL is not set.")
 
 
 def init_authenticator():

@@ -1,5 +1,9 @@
 version = 1
 requires-python = ">=3.12"
+resolution-markers = [
+    "python_full_version >= '3.13'",
+    "python_full_version < '3.13'",
+]
 
 [[package]]
 name = "altair"
@@ -174,6 +178,7 @@ version = "0.7.1"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
+    { name = "discord-webhook" },
     { name = "psutil" },
     { name = "python-dotenv" },
     { name = "requests" },
@@ -202,6 +207,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.36.9" },
+    { name = "discord-webhook", specifier = ">=1.4.1" },
     { name = "psutil", specifier = ">=6.1.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "requests", specifier = ">=2.32.3" },
@@ -406,6 +412,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/43/fa/6d96a0978d19e17b68d634497769987b16c8f4cd0a7a05048bec693caa6b/decorator-5.2.1.tar.gz", hash = "sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360", size = 56711 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4e/8c/f3147f5c4b73e7550fe5f9352eaa956ae838d5c51eb58e7a25b9f3e2643b/decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a", size = 9190 },
+]
+
+[[package]]
+name = "discord-webhook"
+version = "1.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/89/35/4837053ab7d781983c2dce787c5dda42918c3b2936ccadf4e097057ca29a/discord_webhook-1.4.1.tar.gz", hash = "sha256:2913c3ccb216e7d82911f96296f78b6b28b68a6f33a6fa5a61fc2da697b34a4d", size = 13724 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/90/a4db0122694a5657d9434f5c782adc894477a2d17776309290674ba3e7ac/discord_webhook-1.4.1-py3-none-any.whl", hash = "sha256:1ed6a07d16ca0e6e6b1a91536c2fc34d0ba8251e5be37fe8850189aaf1155ee8", size = 13573 },
 ]
 
 [[package]]
