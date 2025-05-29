@@ -6,7 +6,12 @@ import streamlit as st
 from models import GasType, User
 from session import db_session
 from sidebar import make_sidebar
-from utils import VERSION, dump_config, init_authenticator
+from utils import (
+    VERSION,
+    dump_config,
+    init_authenticator,
+    send_discord_notification,
+)
 
 logger = logging.getLogger("gas_station_app")
 st.set_page_config(
@@ -46,6 +51,10 @@ if st.session_state["authentication_status"]:
         submitted = st.form_submit_button()
         if submitted:
             logger.info("User modified preferred gas types")
+            send_discord_notification(
+                topic="modified_gas_types",
+                message=f"User {username} modified their preferred gas types",
+            )
             for key, value in checkboxs_dict.items():
                 if value and key not in id_gastypes_followed:
                     gas_type = (

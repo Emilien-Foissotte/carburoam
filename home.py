@@ -8,11 +8,13 @@ from pathlib import Path
 
 import psutil
 import pytz
+import sentry_sdk
 import streamlit as st
 
 from applogging import init_logging
 from sidebar import make_sidebar
 from utils import (
+    SENTRY_DSN,
     VERSION,
     WAIT_TIME_SECONDS,
     get_prices_user,
@@ -159,7 +161,7 @@ def main():
     if st.session_state["authentication_status"]:
         logger.info("User logged in")
         authenticator.logout("Logout", "sidebar")
-        st.write(f'Welcome on Carburoam, *{st.session_state["name"]}*')
+        st.write(f"Welcome on Carburoam, *{st.session_state['name']}*")
         st.title("Stations 🚘💸🛢️")
         # create a dataframe from the custom stations and the prices
         if st.session_state["username"] is not None:
@@ -255,6 +257,35 @@ def main():
                 "If you didn't entered a real email, don't worry, just DM me ! 🔒"
             )
     make_sidebar(VERSION)
+
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        # Add data like request headers and IP for users,
+        # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+        send_default_pii=True,
+    )
+
+
+# There is no official sentry/streamlit integration
+# But people found some workarounds in the discussion:
+# https://github.com/streamlit/streamlit/issues/3426
+#
+# This code might stop working in a future version
+@st.cache_data()
+def sentry_patch_streamlit():
+    """Streamlit catches all exceptions, this monkey patch send exceptions to Sentry."""
+    import sys
+
+    script_runner = sys.modules["streamlit.runtime.scriptrunner.exec_code"]
+    original_func = script_runner.handle_uncaught_app_exception
+
+    def sentry_patched_func(ex):
+        sentry_sdk.capture_exception(ex)
+        original_func(ex)
+
+    script_runner.handle_uncaught_app_exception = sentry_patched_func
 
 
 if __name__ == "__main__":

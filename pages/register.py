@@ -6,7 +6,12 @@ import streamlit as st
 from models import User
 from session import db_session
 from sidebar import make_sidebar
-from utils import VERSION, dump_config, init_authenticator
+from utils import (
+    VERSION,
+    dump_config,
+    init_authenticator,
+    send_discord_notification,
+)
 
 logger = logging.getLogger("gas_station_app")
 st.set_page_config(
@@ -48,6 +53,10 @@ else:
             except sqlalchemy.exc.IntegrityError:
                 db_session.rollback()
                 st.error("Username or email already exists")
+            send_discord_notification(
+                topic="new_user",
+                message=f"New user registered: {name_of_registered_user} ({username_of_registered_user})",
+            )
             st.success(
                 (
                     "User registered successfully, "
