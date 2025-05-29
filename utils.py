@@ -48,6 +48,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
 BUCKET_NAME_STORE = os.environ.get("BUCKET_NAME_STORE")
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
+SENTRY_DSN = os.environ.get("SENTRY_DSN")
 
 
 @st.cache_data
@@ -206,7 +207,7 @@ def dump_config(config):
         )
     else:
         raise NotImplementedError(
-            f"{os.environ.get('LOAD_MODE')} mode is supported"
+            f"{os.environ.get('LOAD_MODE')} mode is not supported"
         )
 
 

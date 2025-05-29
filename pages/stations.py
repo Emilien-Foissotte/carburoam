@@ -5,7 +5,11 @@ from streamlit_geolocation import streamlit_geolocation
 
 from models import CustomStation, Station, User
 from session import db_session
-from utils import bounding_stations, init_authenticator
+from utils import (
+    bounding_stations,
+    init_authenticator,
+    send_discord_notification,
+)
 
 st.set_page_config(
     page_title="Carburoam",
@@ -274,6 +278,10 @@ if st.session_state["authentication_status"]:
                         db_session.add(custom_station)
                         db_session.commit()
                         st.toast(f"Station {custom_name} added", icon="🎉")
+                        send_discord_notification(
+                            topic="new_station",
+                            message=f"User {username} added a new station: {custom_name}",
+                        )
                         # flush the session state for stations
                         st.session_state["stations"] = {}
 else:

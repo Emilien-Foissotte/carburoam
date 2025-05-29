@@ -15,6 +15,7 @@ dependencies = [
     "psutil>=6.1.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
+    "sentry-sdk>=2.29.1",
     "sqlalchemy>=2.0.37",
     "sqlalchemy-utils>=0.41.2",
     "st-social-media-links>=0.1.4",
