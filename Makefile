@@ -36,6 +36,7 @@ edit-version:  ## Modify VERSION in src/utils.py and version pyproject.toml.
 	sed -i '' "s/^__version__ = \".*\"/__version__ = \"$(version)\"/" src/carburoam/__init__.py
 	git add pyproject.toml src/carburoam/__init__.py utils.py
 	uvx towncrier build
+	git add CHANGELOG.md
 	git feat "Release $(version)" -S
 	git tag -a v$(version) -m "Release $(version)"
 	git push origin main
