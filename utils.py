@@ -30,7 +30,7 @@ from yaml.loader import SafeLoader
 from models import CustomStation, GasType, Price, Station, Transfer, User
 from session import db_session
 
-VERSION = "0.7.1"
+VERSION = "0.8.0"
 
 #################
 ##AUTHENTICATOR##

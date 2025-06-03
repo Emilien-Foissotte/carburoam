@@ -8,6 +8,13 @@ This project uses [_towncrier_](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.8.0](https://github.com/emilien-foissotte/carburoam/tree/v0.8.0) - 2025-06-03
+
+### Added
+
+- Add monitoring of important activity using a Discord bot and Sentry to monitor 500 errors. ([#57](https://github.com/emilien-foisotte/carburoam/issues/57))
+
+
 ## [0.7.1](https://github.com/emilien-foissotte/carburoam/tree/v0.7.1) - 2025-04-13
 
 ### Removed
